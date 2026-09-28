@@ -1,0 +1,86 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Amiri:ital,wght@0,400;0,700;1,400&family=Amiri+Quran&family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  overscroll-behavior: none;
+  touch-action: manipulation;
+}
+
+html[dir='rtl'] body {
+  font-family: 'Amiri', 'Inter', sans-serif;
+}
+
+body {
+  background: radial-gradient(ellipse at top, #064e3b 0%, #022c22 40%, #010a08 100%);
+  background-attachment: fixed;
+  color: #f8fafc;
+  font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #1a4a37;
+  border-radius: 4px;
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-emerald-950/40 backdrop-blur-xl border border-emerald-800/40 rounded-2xl;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(217, 119, 6, 0.05);
+  }
+
+  .gold-text {
+    @apply text-gold-400;
+  }
+
+  .gold-border {
+    @apply border-gold-400/30;
+  }
+
+  .btn-primary {
+    @apply bg-gold-400 text-midnight-950 font-semibold rounded-xl px-4 py-3 transition-all duration-200 active:scale-95 hover:bg-gold-300;
+    box-shadow: 0 2px 12px rgba(217, 119, 6, 0.25);
+  }
+
+  .btn-ghost {
+    @apply bg-emerald-900/40 text-midnight-200 font-medium rounded-xl px-4 py-3 transition-all duration-200 active:scale-95 hover:bg-emerald-800/40 border border-emerald-700/30;
+  }
+
+  .btn-danger {
+    @apply bg-red-900/40 text-red-300 font-medium rounded-xl px-4 py-3 transition-all duration-200 active:scale-95 hover:bg-red-900/60 border border-red-800/50;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
