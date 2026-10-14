@@ -4,8 +4,11 @@ import { supabase } from '@/lib/supabase';
 import type { ReadingPlan, PlanDetailWithProgress, UserDailyProgress } from '@/lib/supabase';
 import { DhikrCounter } from './DhikrCounter';
 import { DailyQuote } from './DailyQuote';
+import { AuthModal } from './AuthModal';
+import { useAuth, isAuthenticated } from '@/lib/auth';
 import { useI18n } from '@/lib/i18n';
 import type { TranslationKey } from '@/lib/translations';
+import { BookOpen } from 'lucide-react';
 
 type DashboardProps = {
   onNavigate: (page: 'dashboard' | 'plans' | 'library' | 'settings' | 'prayer-times' | 'tasbih') => void;
@@ -13,10 +16,12 @@ type DashboardProps = {
 
 export function Dashboard({ onNavigate }: DashboardProps) {
   const { t, lang } = useI18n();
+  const { authState } = useAuth();
   const [plans, setPlans] = useState<ReadingPlan[]>([]);
   const [activePlan, setActivePlan] = useState<ReadingPlan | null>(null);
   const [planDetails, setPlanDetails] = useState<PlanDetailWithProgress[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showAuthModal, setShowAuthModal] = useState(false);
   const [counterState, setCounterState] = useState<{
     planDetailId: string;
     prayerName: string;
@@ -26,9 +31,16 @@ export function Dashboard({ onNavigate }: DashboardProps) {
     progress: UserDailyProgress;
   } | null>(null);
 
+  const isAuthed = isAuthenticated(authState);
+
   useEffect(() => {
+    if (authState.status === 'loading') return;
+    if (!isAuthed) {
+      setLoading(false);
+      return;
+    }
     loadData();
-  }, []);
+  }, [authState.status, isAuthed]);
 
   const loadData = async () => {
     setLoading(true);
@@ -105,7 +117,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
     { key: 'nav.tasbihCounter', icon: CircleDot, page: 'tasbih', color: 'text-emerald2-400' },
   ];
 
-  if (loading) {
+  if (loading || authState.status === 'loading') {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="w-8 h-8 border-2 border-gold-400/30 border-t-gold-400 rounded-full animate-spin" />
@@ -153,7 +165,28 @@ export function Dashboard({ onNavigate }: DashboardProps) {
       {/* Daily Quote */}
       <DailyQuote />
 
-      {plans.length === 0 ? (
+      {/* Guest state: show sign-in prompt instead of personal plans/progress */}
+      {!isAuthed ? (
+        <div className="glass-card p-6 text-center space-y-4">
+          <div className="w-16 h-16 rounded-full bg-gold-400/10 flex items-center justify-center mx-auto border border-gold-400/20">
+            <BookOpen className="w-8 h-8 text-gold-400" />
+          </div>
+          <div>
+            <h2 className="text-lg font-display font-bold text-gold-100 mb-2">
+              {t('auth.guestDashboardTitle')}
+            </h2>
+            <p className="text-sm text-midnight-400 leading-relaxed">
+              {t('auth.guestDashboardDesc')}
+            </p>
+          </div>
+          <button
+            onClick={() => setShowAuthModal(true)}
+            className="btn-primary w-full flex items-center justify-center gap-2"
+          >
+            {t('auth.createAccount')}
+          </button>
+        </div>
+      ) : plans.length === 0 ? (
         <div className="flex flex-col items-center justify-center min-h-[40vh] px-6 text-center">
           <div className="w-16 h-16 rounded-full bg-gold-400/10 flex items-center justify-center mb-4 border border-gold-400/20">
             <Sparkles className="w-8 h-8 text-gold-400" />
@@ -348,6 +381,9 @@ export function Dashboard({ onNavigate }: DashboardProps) {
           onClose={() => setCounterState(null)}
         />
       )}
+
+      {/* Auth modal for guest users */}
+      <AuthModal open={showAuthModal} onClose={() => setShowAuthModal(false)} />
     </div>
   );
 }

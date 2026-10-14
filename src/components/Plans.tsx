@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
-import { Plus, Trash2, BookPlus, X, Check, ChevronDown } from 'lucide-react';
+import { Plus, Trash2, BookPlus, X, Check, ChevronDown, BookOpen } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import type { ReadingPlan, PlanDetailWithPrayer, Prayer } from '@/lib/supabase';
 import { ConfirmDialog } from './ConfirmDialog';
+import { AuthModal } from './AuthModal';
+import { useAuth, isAuthenticated } from '@/lib/auth';
 import { useI18n } from '@/lib/i18n';
 
 export function Plans() {
@@ -119,7 +121,7 @@ export function Plans() {
     await loadPlans();
   };
 
-  if (loading) {
+  if (loading || authState.status === 'loading') {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="w-8 h-8 border-2 border-gold-400/30 border-t-gold-400 rounded-full animate-spin" />
@@ -131,15 +133,37 @@ export function Plans() {
     <div className="px-4 pt-6 pb-24 space-y-4 animate-fade-in">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-display font-bold text-gold-100">{t('plans.title')}</h1>
-        <button
-          onClick={() => setShowCreate(true)}
-          className="w-10 h-10 rounded-full bg-gold-400 text-midnight-950 flex items-center justify-center active:scale-90 transition-transform"
-        >
-          <Plus className="w-5 h-5" strokeWidth={2.5} />
-        </button>
+        {isAuthed && (
+          <button
+            onClick={() => setShowCreate(true)}
+            className="w-10 h-10 rounded-full bg-gold-400 text-midnight-950 flex items-center justify-center active:scale-90 transition-transform"
+          >
+            <Plus className="w-5 h-5" strokeWidth={2.5} />
+          </button>
+        )}
       </div>
 
-      {plans.length === 0 ? (
+      {!isAuthed ? (
+        <div className="flex flex-col items-center justify-center min-h-[50vh] text-center px-6 space-y-4">
+          <div className="w-16 h-16 rounded-full bg-gold-400/10 flex items-center justify-center border border-gold-400/20">
+            <BookOpen className="w-8 h-8 text-gold-400" />
+          </div>
+          <div>
+            <h2 className="text-lg font-display font-bold text-gold-100 mb-2">
+              {t('auth.guestPlansTitle')}
+            </h2>
+            <p className="text-sm text-midnight-400 leading-relaxed">
+              {t('auth.guestPlansDesc')}
+            </p>
+          </div>
+          <button
+            onClick={() => setShowAuthModal(true)}
+            className="btn-primary flex items-center gap-2"
+          >
+            {t('auth.createAccount')}
+          </button>
+        </div>
+      ) : plans.length === 0 ? (
         <div className="flex flex-col items-center justify-center min-h-[50vh] text-center">
           <p className="text-sm text-midnight-400 mb-4">{t('plans.noPlans')}</p>
           <button onClick={() => setShowCreate(true)} className="btn-primary flex items-center gap-2">
@@ -292,6 +316,8 @@ export function Plans() {
         }}
         onCancel={() => setDeleteTarget(null)}
       />
+
+      <AuthModal open={showAuthModal} onClose={() => setShowAuthModal(false)} />
     </div>
   );
 }

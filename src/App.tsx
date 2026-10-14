@@ -7,6 +7,7 @@ import { Settings } from '@/components/Settings';
 import { PrayerTimes } from '@/components/PrayerTimes';
 import { Tasbih } from '@/components/Tasbih';
 import { I18nProvider } from '@/lib/i18n';
+import { AuthProvider } from '@/lib/auth';
 
 type Page = 'dashboard' | 'plans' | 'library' | 'settings' | 'prayer-times' | 'tasbih';
 
@@ -57,7 +58,9 @@ function AppContent() {
 function App() {
   return (
     <I18nProvider>
-      <AppContent />
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
     </I18nProvider>
   );
 }
