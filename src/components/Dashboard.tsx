@@ -35,6 +35,9 @@ export function Dashboard({ onNavigate }: DashboardProps) {
   useEffect(() => {
     if (authState.status === 'loading') return;
     if (!isAuthed) {
+      setPlans([]);
+      setActivePlan(null);
+      setPlanDetails([]);
       setLoading(false);
       return;
     }

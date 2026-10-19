@@ -26,6 +26,9 @@ export function Plans() {
   useEffect(() => {
     if (authState.status === 'loading') return;
     if (!isAuthed) {
+      setPlans([]);
+      setPlanDetailsMap({});
+      setAllPrayers([]);
       setLoading(false);
       return;
     }

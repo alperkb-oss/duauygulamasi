@@ -22,6 +22,7 @@ export type ReadingPlan = {
   plan_name: string;
   is_active: boolean;
   created_at: string;
+  user_id: string | null;
 };
 
 export type PlanDetail = {
