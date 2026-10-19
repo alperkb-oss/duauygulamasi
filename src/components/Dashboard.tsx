@@ -8,7 +8,6 @@ import { AuthModal } from './AuthModal';
 import { useAuth, isAuthenticated } from '@/lib/auth';
 import { useI18n } from '@/lib/i18n';
 import type { TranslationKey } from '@/lib/translations';
-import { BookOpen } from 'lucide-react';
 
 type DashboardProps = {
   onNavigate: (page: 'dashboard' | 'plans' | 'library' | 'settings' | 'prayer-times' | 'tasbih') => void;

@@ -9,9 +9,11 @@ import { useI18n } from '@/lib/i18n';
 
 export function Plans() {
   const { t } = useI18n();
+  const { authState } = useAuth();
   const [plans, setPlans] = useState<ReadingPlan[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCreate, setShowCreate] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
   const [newPlanName, setNewPlanName] = useState('');
   const [expandedPlanId, setExpandedPlanId] = useState<string | null>(null);
   const [planDetailsMap, setPlanDetailsMap] = useState<Record<string, PlanDetailWithPrayer[]>>({});
@@ -19,10 +21,17 @@ export function Plans() {
   const [showAddPrayer, setShowAddPrayer] = useState<string | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<{ type: 'plan' | 'prayer'; id: string; planId?: string } | null>(null);
 
+  const isAuthed = isAuthenticated(authState);
+
   useEffect(() => {
+    if (authState.status === 'loading') return;
+    if (!isAuthed) {
+      setLoading(false);
+      return;
+    }
     loadPlans();
     loadPrayers();
-  }, []);
+  }, [authState.status, isAuthed]);
 
   const loadPlans = async () => {
     setLoading(true);

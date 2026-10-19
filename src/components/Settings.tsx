@@ -1,8 +1,10 @@
 import { useState } from 'react';
-import { ChevronLeft, Globe, Check, Clock, Sparkles } from 'lucide-react';
+import { ChevronLeft, Globe, Check, Clock, Sparkles, User, LogOut, LogIn } from 'lucide-react';
 import { useI18n } from '@/lib/i18n';
 import { LANGUAGES, type LanguageCode, type TranslationKey } from '@/lib/translations';
 import { CALCULATION_METHODS, getMethodById } from '@/lib/prayerTimesTypes';
+import { useAuth, isAuthenticated } from '@/lib/auth';
+import { AuthModal } from './AuthModal';
 
 type SettingsProps = {
   onBack: () => void;
@@ -25,7 +27,10 @@ function loadManualMethodId(): number | null {
 
 export function Settings({ onBack }: SettingsProps) {
   const { lang, setLang, t } = useI18n();
+  const { authState, signOut } = useAuth();
   const [selectedLang, setSelectedLang] = useState<LanguageCode>(lang);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const isAuthed = isAuthenticated(authState);
 
   const [methodMode, setMethodMode] = useState<MethodMode>(() => loadMethodMode());
   const [manualMethodId, setManualMethodId] = useState<number | null>(() => loadManualMethodId());
@@ -159,6 +164,46 @@ export function Settings({ onBack }: SettingsProps) {
           })}
         </div>
       </div>
+
+      {/* Account section */}
+      <div className="glass-card p-5">
+        <div className="flex items-center gap-2 mb-1">
+          <User className="w-4 h-4 text-gold-400" />
+          <h2 className="text-base font-display font-bold text-gold-100">{t('auth.account')}</h2>
+        </div>
+        <p className="text-xs text-midnight-400 mb-4">{t('auth.accountDesc')}</p>
+
+        {isAuthed ? (
+          <div className="space-y-3">
+            <div className="flex items-center gap-3 rounded-xl p-3.5 bg-emerald-950/30 border border-emerald-800/30">
+              <div className="w-9 h-9 rounded-full bg-gold-400/10 flex items-center justify-center shrink-0">
+                <User className="w-4 h-4 text-gold-400" />
+              </div>
+              <div className="min-w-0">
+                <p className="text-xs text-midnight-400">{t('auth.signedInAs')}</p>
+                <p className="text-sm font-medium text-midnight-100 truncate">{authState.user.email}</p>
+              </div>
+            </div>
+            <button
+              onClick={() => signOut()}
+              className="w-full flex items-center justify-center gap-2 rounded-xl p-3.5 text-sm font-medium text-red-400/80 bg-red-900/10 border border-red-900/20 hover:bg-red-900/20 hover:text-red-400 transition-all active:scale-95"
+            >
+              <LogOut className="w-4 h-4" />
+              {t('auth.signOut')}
+            </button>
+          </div>
+        ) : (
+          <button
+            onClick={() => setShowAuthModal(true)}
+            className="w-full flex items-center justify-center gap-2 rounded-xl p-3.5 text-sm font-medium text-gold-100 bg-gold-400/10 border border-gold-400/30 hover:bg-gold-400/20 transition-all active:scale-95"
+          >
+            <LogIn className="w-4 h-4" />
+            {t('auth.createAccount')}
+          </button>
+        )}
+      </div>
+
+      <AuthModal open={showAuthModal} onClose={() => setShowAuthModal(false)} />
     </div>
   );
 }

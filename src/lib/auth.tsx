@@ -2,8 +2,6 @@ import { createContext, useContext, useState, useEffect, useCallback, type React
 import type { Session, User } from '@supabase/supabase-js';
 import { supabase } from './supabase';
 
-type AuthStatus = 'loading' | 'guest' | 'authenticated';
-
 type AuthState =
   | { status: 'loading' }
   | { status: 'guest' }
