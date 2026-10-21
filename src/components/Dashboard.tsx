@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Sun, Moon, ChevronRight, Calendar, Sparkles, TrendingUp, Settings as SettingsIcon, BookOpen, Library as LibraryIcon, Clock, CircleDot, AlertCircle, RefreshCw } from 'lucide-react';
+import { Sun, Moon, ChevronRight, Calendar, Sparkles, TrendingUp, Settings as SettingsIcon, BookOpen, Library as LibraryIcon, Clock, CircleDot, AlertCircle, RefreshCw, ChevronDown } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import type { ReadingPlan, PlanDetailWithProgress, UserDailyProgress } from '@/lib/supabase';
 import { DhikrCounter } from './DhikrCounter';
@@ -22,6 +22,8 @@ export function Dashboard({ onNavigate }: DashboardProps) {
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [selectedDetailId, setSelectedDetailId] = useState<string | null>(null);
+  const [expandedDetailId, setExpandedDetailId] = useState<string | null>(null);
   const [counterState, setCounterState] = useState<{
     planDetailId: string;
     prayerName: string;
@@ -102,20 +104,47 @@ export function Dashboard({ onNavigate }: DashboardProps) {
     );
   };
 
-  const currentDetail = planDetails.find((pd) => {
-    const progress = pd.user_daily_progress[0];
-    if (!progress) return false;
-    return !progress.is_morning_completed || !progress.is_evening_completed;
-  });
+  const currentDetail = selectedDetailId
+    ? planDetails.find((pd) => pd.id === selectedDetailId) || null
+    : planDetails.find((pd) => {
+        const progress = pd.user_daily_progress[0];
+        if (!progress) return false;
+        return !progress.is_morning_completed || !progress.is_evening_completed;
+      }) || null;
 
-  const completedCount = planDetails.filter((pd) => {
-    const p = pd.user_daily_progress[0];
-    return p && p.is_morning_completed && p.is_evening_completed;
-  }).length;
+  const dailyProgress = (() => {
+    let totalDone = 0;
+    let totalTarget = 0;
+    for (const pd of planDetails) {
+      totalTarget += pd.target_count_morning + pd.target_count_evening;
+      const p = pd.user_daily_progress[0];
+      if (p) {
+        totalDone += Math.min(p.morning_count_done, pd.target_count_morning);
+        totalDone += Math.min(p.evening_count_done, pd.target_count_evening);
+      }
+    }
+    return totalTarget > 0 ? Math.min(Math.round((totalDone / totalTarget) * 100), 100) : 0;
+  })();
 
-  const overallProgress = planDetails.length > 0
-    ? Math.round((completedCount / planDetails.length) * 100)
-    : 0;
+  const dailyRepetitionsDone = (() => {
+    let totalDone = 0;
+    for (const pd of planDetails) {
+      const p = pd.user_daily_progress[0];
+      if (p) {
+        totalDone += Math.min(p.morning_count_done, pd.target_count_morning);
+        totalDone += Math.min(p.evening_count_done, pd.target_count_evening);
+      }
+    }
+    return totalDone;
+  })();
+
+  const dailyRepetitionsTarget = (() => {
+    let total = 0;
+    for (const pd of planDetails) {
+      total += pd.target_count_morning + pd.target_count_evening;
+    }
+    return total;
+  })();
 
   const localeMap: Record<string, string> = {
     tr: 'tr-TR', en: 'en-US', ar: 'ar-SA', de: 'de-DE', fr: 'fr-FR',
@@ -247,100 +276,20 @@ export function Dashboard({ onNavigate }: DashboardProps) {
                 <TrendingUp className="w-4 h-4 text-gold-400" />
                 <span className="text-sm font-medium text-midnight-200">{t('home.overallProgress')}</span>
               </div>
-              <span className="text-2xl font-display font-bold text-gold-100">{overallProgress}%</span>
+              <span className="text-2xl font-display font-bold text-gold-100">{dailyProgress}%</span>
             </div>
             <div className="h-2 bg-midnight-700/50 rounded-full overflow-hidden">
               <div
                 className="h-full bg-gradient-to-r from-gold-500 to-gold-300 rounded-full transition-all duration-500"
-                style={{ width: `${overallProgress}%` }}
+                style={{ width: `${dailyProgress}%` }}
               />
             </div>
             <p className="text-xs text-midnight-400 mt-2">
-              {completedCount} / {planDetails.length} {t('home.prayersCompleted')}
+              {dailyRepetitionsDone} / {dailyRepetitionsTarget} {t('home.repetitionsCompleted')}
             </p>
           </div>
 
-          {/* Current priority prayer */}
-          {currentDetail && (
-            <div>
-              <div className="flex items-center gap-2 mb-3 px-1">
-                <Sparkles className="w-4 h-4 text-gold-400" />
-                <h2 className="text-sm font-semibold text-midnight-200">{t('home.currentPriority')}</h2>
-              </div>
-              <div className="glass-card p-5 border-gold-400/20 animate-pulse-gold">
-                <div className="flex items-start justify-between mb-3">
-                  <div>
-                    <span className="text-xs text-gold-400 font-medium">
-                      {currentDetail.sequence_order}
-                    </span>
-                    <h3 className="text-xl font-display font-bold text-gold-100 mt-0.5">
-                      {currentDetail.prayers.name}
-                    </h3>
-                    {currentDetail.prayers.meaning && (
-                      <p className="text-xs text-midnight-400 mt-1 leading-relaxed">
-                        {currentDetail.prayers.meaning}
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-2 mb-4">
-                  <Calendar className="w-4 h-4 text-midnight-400" />
-                  <span className="text-sm text-midnight-300">
-                    {currentDetail.target_days} {t('home.dayXOfY')}{' '}
-                    <span className="font-bold text-gold-100">
-                      {currentDetail.user_daily_progress[0]?.current_day_number || 1}.
-                    </span>
-                  </span>
-                </div>
-
-                <div className="grid grid-cols-2 gap-3">
-                  <SessionSlot
-                    icon="morning"
-                    label={t('home.morning')}
-                    done={currentDetail.user_daily_progress[0]?.morning_count_done || 0}
-                    target={currentDetail.target_count_morning}
-                    completed={currentDetail.user_daily_progress[0]?.is_morning_completed || false}
-                    onTap={() => {
-                      const p = currentDetail.user_daily_progress[0];
-                      if (p) {
-                        setCounterState({
-                          planDetailId: currentDetail.id,
-                          prayerName: currentDetail.prayers.name,
-                          prayerMeaning: currentDetail.prayers.meaning || '',
-                          targetCount: currentDetail.target_count_morning,
-                          session: 'morning',
-                          progress: p,
-                        });
-                      }
-                    }}
-                  />
-                  <SessionSlot
-                    icon="evening"
-                    label={t('home.evening')}
-                    done={currentDetail.user_daily_progress[0]?.evening_count_done || 0}
-                    target={currentDetail.target_count_evening}
-                    completed={currentDetail.user_daily_progress[0]?.is_evening_completed || false}
-                    onTap={() => {
-                      const p = currentDetail.user_daily_progress[0];
-                      if (p) {
-                        setCounterState({
-                          planDetailId: currentDetail.id,
-                          prayerName: currentDetail.prayers.name,
-                          prayerMeaning: currentDetail.prayers.meaning || '',
-                          targetCount: currentDetail.target_count_evening,
-                          session: 'evening',
-                          progress: p,
-                        });
-                      }
-                    }}
-                  />
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* All plan items in sequence */}
+          {/* Prayer selection list */}
           <div>
             <h2 className="text-sm font-semibold text-midnight-200 mb-3 px-1">
               {t('home.allPrayers')}
@@ -352,37 +301,108 @@ export function Dashboard({ onNavigate }: DashboardProps) {
                 const eveningDone = progress?.is_evening_completed || false;
                 const fullyDone = morningDone && eveningDone;
                 const isCurrent = currentDetail?.id === pd.id;
+                const isExpanded = expandedDetailId === pd.id;
 
                 return (
                   <div
                     key={pd.id}
-                    className={`glass-card p-4 flex items-center gap-3 ${
+                    className={`glass-card overflow-hidden ${
                       isCurrent ? 'border-gold-400/30' : ''
-                    } ${fullyDone ? 'opacity-50' : ''}`}
+                    }`}
                   >
-                    <div
-                      className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${
-                        fullyDone
-                          ? 'bg-emerald2-500/20 text-emerald2-400'
-                          : isCurrent
-                            ? 'bg-gold-400 text-midnight-950'
-                            : 'bg-midnight-700 text-midnight-400'
+                    <button
+                      onClick={() => {
+                        setSelectedDetailId(pd.id);
+                        setExpandedDetailId(isExpanded ? null : pd.id);
+                      }}
+                      className={`w-full flex items-center gap-3 p-4 text-left ${
+                        fullyDone ? 'opacity-50' : ''
                       }`}
                     >
-                      {fullyDone ? '✓' : pd.sequence_order}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <h3 className="text-sm font-medium text-midnight-100 truncate">
-                        {pd.prayers.name}
-                      </h3>
-                      <p className="text-xs text-midnight-400">
-                        {pd.target_days} {t('plans.days')} · {t('home.morning')} {pd.target_count_morning}x · {t('home.evening')} {pd.target_count_evening}x
-                      </p>
-                    </div>
-                    <div className="flex gap-1.5 shrink-0">
-                      <div className={`w-2 h-2 rounded-full ${morningDone ? 'bg-emerald2-400' : 'bg-midnight-600'}`} />
-                      <div className={`w-2 h-2 rounded-full ${eveningDone ? 'bg-emerald2-400' : 'bg-midnight-600'}`} />
-                    </div>
+                      <div
+                        className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${
+                          fullyDone
+                            ? 'bg-emerald2-500/20 text-emerald2-400'
+                            : isCurrent
+                              ? 'bg-gold-400 text-midnight-950'
+                              : 'bg-midnight-700 text-midnight-400'
+                        }`}
+                      >
+                        {fullyDone ? '✓' : pd.sequence_order}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="text-sm font-medium text-midnight-100 truncate">
+                          {pd.prayers.name}
+                        </h3>
+                        <p className="text-xs text-midnight-400">
+                          {pd.target_days} {t('plans.days')} · {t('home.morning')} {pd.target_count_morning}x · {t('home.evening')} {pd.target_count_evening}x
+                        </p>
+                      </div>
+                      <div className="flex gap-1.5 shrink-0 items-center">
+                        <div className={`w-2 h-2 rounded-full ${morningDone ? 'bg-emerald2-400' : 'bg-midnight-600'}`} />
+                        <div className={`w-2 h-2 rounded-full ${eveningDone ? 'bg-emerald2-400' : 'bg-midnight-600'}`} />
+                        <ChevronDown
+                          className={`w-4 h-4 text-midnight-400 transition-transform ml-1 ${isExpanded ? 'rotate-180' : ''}`}
+                        />
+                      </div>
+                    </button>
+
+                    {isExpanded && (
+                      <div className="px-4 pb-4 space-y-3 animate-slide-up">
+                        <div className="flex items-center gap-2">
+                          <Calendar className="w-4 h-4 text-midnight-400" />
+                          <span className="text-sm text-midnight-300">
+                            {pd.target_days} {t('home.dayXOfY')}{' '}
+                            <span className="font-bold text-gold-100">
+                              {progress?.current_day_number || 1}.
+                            </span>
+                          </span>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-3">
+                          <SessionSlot
+                            icon="morning"
+                            label={t('home.morning')}
+                            done={progress?.morning_count_done || 0}
+                            target={pd.target_count_morning}
+                            completed={morningDone}
+                            onTap={() => {
+                              const p = pd.user_daily_progress[0];
+                              if (p) {
+                                setCounterState({
+                                  planDetailId: pd.id,
+                                  prayerName: pd.prayers.name,
+                                  prayerMeaning: pd.prayers.meaning || '',
+                                  targetCount: pd.target_count_morning,
+                                  session: 'morning',
+                                  progress: p,
+                                });
+                              }
+                            }}
+                          />
+                          <SessionSlot
+                            icon="evening"
+                            label={t('home.evening')}
+                            done={progress?.evening_count_done || 0}
+                            target={pd.target_count_evening}
+                            completed={eveningDone}
+                            onTap={() => {
+                              const p = pd.user_daily_progress[0];
+                              if (p) {
+                                setCounterState({
+                                  planDetailId: pd.id,
+                                  prayerName: pd.prayers.name,
+                                  prayerMeaning: pd.prayers.meaning || '',
+                                  targetCount: pd.target_count_evening,
+                                  session: 'evening',
+                                  progress: p,
+                                });
+                              }
+                            }}
+                          />
+                        </div>
+                      </div>
+                    )}
                   </div>
                 );
               })}

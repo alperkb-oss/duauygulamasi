@@ -179,6 +179,7 @@ export type TranslationKey =
   | 'plans.errorLoadPlans'
   | 'home.errorLoadPlans'
   | 'home.retry'
+  | 'home.repetitionsCompleted'
   | 'counter.errorUpdate';
 
 type TranslationDict = Record<TranslationKey, string>;
@@ -334,6 +335,7 @@ const tr: TranslationDict = {
   'plans.errorLoadPlans': 'Planlar yüklenirken bir hata oluştu. Lütfen tekrar deneyin.',
   'home.errorLoadPlans': 'Veriler yüklenirken bir hata oluştu. Lütfen tekrar deneyin.',
   'home.retry': 'Tekrar Dene',
+  'home.repetitionsCompleted': 'tekrar tamamlandı',
   'counter.errorUpdate': 'Güncelleme başarısız oldu. Sayacınız senkronize edilemedi.',
   'prayerTimes.selectCountry': 'Ülke Seçin',
   'prayerTimes.selectCity': 'Şehir Seçin',
@@ -506,6 +508,7 @@ const en: TranslationDict = {
   'plans.errorLoadPlans': 'An error occurred while loading plans. Please try again.',
   'home.errorLoadPlans': 'An error occurred while loading data. Please try again.',
   'home.retry': 'Retry',
+  'home.repetitionsCompleted': 'repetitions completed',
   'counter.errorUpdate': 'Update failed. Your counter could not be synchronized.',
   'prayerTimes.selectCountry': 'Select Country',
   'prayerTimes.selectCity': 'Select City',
@@ -678,6 +681,7 @@ const ar: TranslationDict = {
   'plans.errorLoadPlans': 'حدث خطأ أثناء تحميل الخطط. يرجى المحاولة مرة أخرى.',
   'home.errorLoadPlans': 'حدث خطأ أثناء تحميل البيانات. يرجى المحاولة مرة أخرى.',
   'home.retry': 'إعادة المحاولة',
+  'home.repetitionsCompleted': 'تكرار مكتمل',
   'counter.errorUpdate': 'فشل التحديث. تعذر مزامنة العداد.',
   'prayerTimes.selectCountry': 'اختر الدولة',
   'prayerTimes.selectCity': 'اختر المدينة',
@@ -850,6 +854,7 @@ const de: TranslationDict = {
   'plans.errorLoadPlans': 'Beim Laden der Pläne ist ein Fehler aufgetreten. Bitte erneut versuchen.',
   'home.errorLoadPlans': 'Beim Laden der Daten ist ein Fehler aufgetreten. Bitte erneut versuchen.',
   'home.retry': 'Erneut versuchen',
+  'home.repetitionsCompleted': 'Wiederholungen abgeschlossen',
   'counter.errorUpdate': 'Aktualisierung fehlgeschlagen. Ihr Zähler konnte nicht synchronisiert werden.',
   'prayerTimes.selectCountry': 'Land auswählen',
   'prayerTimes.selectCity': 'Stadt auswählen',
@@ -1022,6 +1027,7 @@ const fr: TranslationDict = {
   'plans.errorLoadPlans': 'Une erreur est survenue lors du chargement des plans. Veuillez réessayer.',
   'home.errorLoadPlans': 'Une erreur est survenue lors du chargement des données. Veuillez réessayer.',
   'home.retry': 'Réessayer',
+  'home.repetitionsCompleted': 'répétitions terminées',
   'counter.errorUpdate': 'Échec de la mise à jour. Votre compteur n\'a pas pu être synchronisé.',
   'prayerTimes.selectCountry': 'Sélectionner un pays',
   'prayerTimes.selectCity': 'Sélectionner une ville',
