@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Check, RotateCcw, CheckCheck, Moon, Sun, ChevronLeft } from 'lucide-react';
+import { Check, RotateCcw, CheckCheck, Moon, Sun, ChevronLeft, AlertCircle } from 'lucide-react';
 import { ConfirmDialog } from './ConfirmDialog';
 import { supabase } from '@/lib/supabase';
 import type { UserDailyProgress } from '@/lib/supabase';
@@ -34,6 +34,7 @@ export function DhikrCounter({
   const [count, setCount] = useState(currentCount);
   const [showConfirm, setShowConfirm] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [dbError, setDbError] = useState(false);
   const ringRef = useRef<SVGCircleElement>(null);
   const animationRef = useRef<number | null>(null);
 
@@ -48,8 +49,10 @@ export function DhikrCounter({
   const handleTap = async () => {
     if (isCompleted || count >= targetCount) return;
 
+    const prevCount = count;
     const newCount = count + 1;
     setCount(newCount);
+    setDbError(false);
     setIsAnimating(true);
     if (animationRef.current) cancelAnimationFrame(animationRef.current);
     animationRef.current = requestAnimationFrame(() => setIsAnimating(false));
@@ -72,12 +75,16 @@ export function DhikrCounter({
       .select()
       .single();
 
-    if (!error && data) {
-      onProgressUpdate(data as UserDailyProgress);
+    if (error || !data) {
+      setCount(prevCount);
+      setDbError(true);
+      return;
     }
+    onProgressUpdate(data as UserDailyProgress);
   };
 
   const handleReset = async () => {
+    setDbError(false);
     const updateData: Partial<UserDailyProgress> = {};
     if (isMorning) {
       updateData.morning_count_done = 0;
@@ -94,14 +101,17 @@ export function DhikrCounter({
       .select()
       .single();
 
-    if (!error && data) {
-      setCount(0);
-      onProgressUpdate(data as UserDailyProgress);
+    if (error || !data) {
+      setDbError(true);
+      return;
     }
+    setCount(0);
+    onProgressUpdate(data as UserDailyProgress);
   };
 
   const handleMarkAllComplete = async () => {
     setShowConfirm(false);
+    setDbError(false);
     const updateData: Partial<UserDailyProgress> = {};
     if (isMorning) {
       updateData.morning_count_done = targetCount;
@@ -118,11 +128,13 @@ export function DhikrCounter({
       .select()
       .single();
 
-    if (!error && data) {
-      setCount(targetCount);
-      onProgressUpdate(data as UserDailyProgress);
-      onClose();
+    if (error || !data) {
+      setDbError(true);
+      return;
     }
+    setCount(targetCount);
+    onProgressUpdate(data as UserDailyProgress);
+    onClose();
   };
 
   const SessionIcon = isMorning ? Sun : Moon;
@@ -216,6 +228,12 @@ export function DhikrCounter({
       </div>
 
       <div className="px-6 pb-8 space-y-3 safe-bottom">
+        {dbError && (
+          <div className="flex items-center gap-2 px-4 py-3 rounded-xl bg-red-900/20 border border-red-800/30">
+            <AlertCircle className="w-4 h-4 text-red-400 shrink-0" />
+            <p className="text-xs text-red-300">{t('counter.errorUpdate')}</p>
+          </div>
+        )}
         {!isCompleted && (
           <button
             onClick={() => setShowConfirm(true)}

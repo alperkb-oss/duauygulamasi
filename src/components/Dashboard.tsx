@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Sun, Moon, ChevronRight, Calendar, Sparkles, TrendingUp, Settings as SettingsIcon, BookOpen, Library as LibraryIcon, Clock, CircleDot } from 'lucide-react';
+import { Sun, Moon, ChevronRight, Calendar, Sparkles, TrendingUp, Settings as SettingsIcon, BookOpen, Library as LibraryIcon, Clock, CircleDot, AlertCircle, RefreshCw } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import type { ReadingPlan, PlanDetailWithProgress, UserDailyProgress } from '@/lib/supabase';
 import { DhikrCounter } from './DhikrCounter';
@@ -20,6 +20,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
   const [activePlan, setActivePlan] = useState<ReadingPlan | null>(null);
   const [planDetails, setPlanDetails] = useState<PlanDetailWithProgress[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [counterState, setCounterState] = useState<{
     planDetailId: string;
@@ -39,17 +40,26 @@ export function Dashboard({ onNavigate }: DashboardProps) {
       setActivePlan(null);
       setPlanDetails([]);
       setLoading(false);
+      setLoadError(false);
       return;
     }
+    setLoadError(false);
     loadData();
   }, [authState.status, isAuthed]);
 
   const loadData = async () => {
     setLoading(true);
-    const { data: planData } = await supabase
+    setLoadError(false);
+    const { data: planData, error } = await supabase
       .from('reading_plans')
       .select('*')
       .order('created_at', { ascending: false });
+
+    if (error) {
+      setLoadError(true);
+      setLoading(false);
+      return;
+    }
 
     if (!planData || planData.length === 0) {
       setLoading(false);
@@ -186,6 +196,17 @@ export function Dashboard({ onNavigate }: DashboardProps) {
             className="btn-primary w-full flex items-center justify-center gap-2"
           >
             {t('auth.createAccount')}
+          </button>
+        </div>
+      ) : loadError ? (
+        <div className="flex flex-col items-center justify-center min-h-[40vh] px-6 text-center space-y-4">
+          <div className="w-16 h-16 rounded-full bg-red-900/20 flex items-center justify-center border border-red-800/30">
+            <AlertCircle className="w-8 h-8 text-red-400" />
+          </div>
+          <p className="text-sm text-midnight-400">{t('home.errorLoadPlans')}</p>
+          <button onClick={() => loadData()} className="btn-primary flex items-center gap-2">
+            <RefreshCw className="w-4 h-4" />
+            {t('home.retry')}
           </button>
         </div>
       ) : plans.length === 0 ? (

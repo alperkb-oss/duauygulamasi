@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
-import { Plus, Trash2, BookPlus, X, Check, ChevronDown, BookOpen } from 'lucide-react';
+import { Plus, Trash2, BookPlus, X, Check, ChevronDown, BookOpen, AlertCircle, RefreshCw } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import type { ReadingPlan, PlanDetailWithPrayer, Prayer } from '@/lib/supabase';
 import { ConfirmDialog } from './ConfirmDialog';
 import { AuthModal } from './AuthModal';
 import { useAuth, isAuthenticated } from '@/lib/auth';
 import { useI18n } from '@/lib/i18n';
+import type { TranslationKey } from '@/lib/translations';
 
 export function Plans() {
   const { t } = useI18n();
@@ -20,6 +21,8 @@ export function Plans() {
   const [allPrayers, setAllPrayers] = useState<Prayer[]>([]);
   const [showAddPrayer, setShowAddPrayer] = useState<string | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<{ type: 'plan' | 'prayer'; id: string; planId?: string } | null>(null);
+  const [errorMsg, setErrorMsg] = useState<TranslationKey | null>(null);
+  const [loadError, setLoadError] = useState(false);
 
   const isAuthed = isAuthenticated(authState);
 
@@ -30,18 +33,27 @@ export function Plans() {
       setPlanDetailsMap({});
       setAllPrayers([]);
       setLoading(false);
+      setLoadError(false);
       return;
     }
+    setLoadError(false);
     loadPlans();
     loadPrayers();
   }, [authState.status, isAuthed]);
 
   const loadPlans = async () => {
     setLoading(true);
-    const { data } = await supabase
+    setLoadError(false);
+    const { data, error } = await supabase
       .from('reading_plans')
       .select('*')
       .order('created_at', { ascending: false });
+
+    if (error) {
+      setLoadError(true);
+      setLoading(false);
+      return;
+    }
 
     if (data) {
       setPlans(data as ReadingPlan[]);
@@ -69,31 +81,41 @@ export function Plans() {
 
   const handleCreatePlan = async () => {
     if (!newPlanName.trim()) return;
-    const { data } = await supabase
+    if (!isAuthed || !authState.user) return;
+    setErrorMsg(null);
+    const { data, error } = await supabase
       .from('reading_plans')
-      .insert({ plan_name: newPlanName.trim(), is_active: plans.length === 0 })
+      .insert({ plan_name: newPlanName.trim(), is_active: plans.length === 0, user_id: authState.user.id })
       .select()
       .single();
 
-    if (data) {
-      setNewPlanName('');
-      setShowCreate(false);
-      await loadPlans();
+    if (error || !data) {
+      setErrorMsg('plans.errorCreate');
+      return;
     }
+    setNewPlanName('');
+    setShowCreate(false);
+    await loadPlans();
   };
 
   const handleToggleActive = async (plan: ReadingPlan) => {
     if (plan.is_active) return;
-    await supabase.from('reading_plans').update({ is_active: false }).neq('id', plan.id);
-    await supabase.from('reading_plans').update({ is_active: true }).eq('id', plan.id);
+    setErrorMsg(null);
+    const { error: err1 } = await supabase.from('reading_plans').update({ is_active: false }).neq('id', plan.id);
+    const { error: err2 } = await supabase.from('reading_plans').update({ is_active: true }).eq('id', plan.id);
+    if (err1 || err2) {
+      setErrorMsg('plans.errorToggle');
+      return;
+    }
     await loadPlans();
   };
 
   const handleAddPrayer = async (planId: string, prayer: Prayer) => {
     const existing = planDetailsMap[planId] || [];
     const maxSeq = existing.length > 0 ? Math.max(...existing.map((d) => d.sequence_order)) : 0;
+    setErrorMsg(null);
 
-    const { data: detail } = await supabase
+    const { data: detail, error: detailErr } = await supabase
       .from('plan_details')
       .insert({
         plan_id: planId,
@@ -106,29 +128,47 @@ export function Plans() {
       .select()
       .single();
 
-    if (detail) {
-      await supabase.from('user_daily_progress').insert({
-        plan_detail_id: detail.id,
-        current_day_number: 1,
-        morning_count_done: 0,
-        evening_count_done: 0,
-        is_morning_completed: false,
-        is_evening_completed: false,
-        date: new Date().toISOString().split('T')[0],
-      });
-      setShowAddPrayer(null);
-      await loadPlans();
+    if (detailErr || !detail) {
+      setErrorMsg('plans.errorAddPrayer');
+      return;
     }
+
+    const { error: progressErr } = await supabase.from('user_daily_progress').insert({
+      plan_detail_id: detail.id,
+      current_day_number: 1,
+      morning_count_done: 0,
+      evening_count_done: 0,
+      is_morning_completed: false,
+      is_evening_completed: false,
+      date: new Date().toISOString().split('T')[0],
+    });
+
+    if (progressErr) {
+      setErrorMsg('plans.errorAddPrayer');
+      return;
+    }
+    setShowAddPrayer(null);
+    await loadPlans();
   };
 
   const handleRemovePrayer = async (planDetailId: string) => {
-    await supabase.from('plan_details').delete().eq('id', planDetailId);
+    setErrorMsg(null);
+    const { error } = await supabase.from('plan_details').delete().eq('id', planDetailId);
+    if (error) {
+      setErrorMsg('plans.errorRemovePrayer');
+      return;
+    }
     setDeleteTarget(null);
     await loadPlans();
   };
 
   const handleDeletePlan = async (planId: string) => {
-    await supabase.from('reading_plans').delete().eq('id', planId);
+    setErrorMsg(null);
+    const { error } = await supabase.from('reading_plans').delete().eq('id', planId);
+    if (error) {
+      setErrorMsg('plans.errorDelete');
+      return;
+    }
     setDeleteTarget(null);
     await loadPlans();
   };
@@ -155,6 +195,13 @@ export function Plans() {
         )}
       </div>
 
+      {errorMsg && (
+        <div className="glass-card p-4 flex items-start gap-3 border-red-800/30">
+          <AlertCircle className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />
+          <p className="text-xs text-red-300 leading-relaxed">{t(errorMsg)}</p>
+        </div>
+      )}
+
       {!isAuthed ? (
         <div className="flex flex-col items-center justify-center min-h-[50vh] text-center px-6 space-y-4">
           <div className="w-16 h-16 rounded-full bg-gold-400/10 flex items-center justify-center border border-gold-400/20">
@@ -173,6 +220,17 @@ export function Plans() {
             className="btn-primary flex items-center gap-2"
           >
             {t('auth.createAccount')}
+          </button>
+        </div>
+      ) : loadError ? (
+        <div className="flex flex-col items-center justify-center min-h-[50vh] text-center space-y-4">
+          <div className="w-14 h-14 rounded-full bg-red-900/20 flex items-center justify-center border border-red-800/30">
+            <AlertCircle className="w-7 h-7 text-red-400" />
+          </div>
+          <p className="text-sm text-midnight-400">{t('plans.errorLoadPlans')}</p>
+          <button onClick={() => loadPlans()} className="btn-primary flex items-center gap-2">
+            <RefreshCw className="w-4 h-4" />
+            {t('home.retry')}
           </button>
         </div>
       ) : plans.length === 0 ? (

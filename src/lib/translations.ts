@@ -170,7 +170,16 @@ export type TranslationKey =
   | 'auth.guestPlansDesc'
   | 'auth.guestDashboardTitle'
   | 'auth.guestDashboardDesc'
-  | 'auth.createAccount';
+  | 'auth.createAccount'
+  | 'plans.errorCreate'
+  | 'plans.errorDelete'
+  | 'plans.errorToggle'
+  | 'plans.errorAddPrayer'
+  | 'plans.errorRemovePrayer'
+  | 'plans.errorLoadPlans'
+  | 'home.errorLoadPlans'
+  | 'home.retry'
+  | 'counter.errorUpdate';
 
 type TranslationDict = Record<TranslationKey, string>;
 
@@ -317,6 +326,15 @@ const tr: TranslationDict = {
   'auth.guestDashboardTitle': 'İlerlemenizi Takip Edin',
   'auth.guestDashboardDesc': 'Kişisel dua planlarınızı oluşturmak ve günlük zikir takibinizi sürdürmek için giriş yapın.',
   'auth.createAccount': 'Giriş Yap / Hesap Oluştur',
+  'plans.errorCreate': 'Plan oluşturulurken bir hata oluştu. Lütfen tekrar deneyin.',
+  'plans.errorDelete': 'Plan silinirken bir hata oluştu. Lütfen tekrar deneyin.',
+  'plans.errorToggle': 'Plan durumu güncellenirken bir hata oluştu. Lütfen tekrar deneyin.',
+  'plans.errorAddPrayer': 'Dua eklenirken bir hata oluştu. Lütfen tekrar deneyin.',
+  'plans.errorRemovePrayer': 'Dua çıkarılırken bir hata oluştu. Lütfen tekrar deneyin.',
+  'plans.errorLoadPlans': 'Planlar yüklenirken bir hata oluştu. Lütfen tekrar deneyin.',
+  'home.errorLoadPlans': 'Veriler yüklenirken bir hata oluştu. Lütfen tekrar deneyin.',
+  'home.retry': 'Tekrar Dene',
+  'counter.errorUpdate': 'Güncelleme başarısız oldu. Sayacınız senkronize edilemedi.',
   'prayerTimes.selectCountry': 'Ülke Seçin',
   'prayerTimes.selectCity': 'Şehir Seçin',
   'prayerTimes.searchCountry': 'Ülke ara...',
@@ -480,6 +498,15 @@ const en: TranslationDict = {
   'auth.guestDashboardTitle': 'Track Your Progress',
   'auth.guestDashboardDesc': 'Sign in to create your personal prayer plans and keep up with your daily dhikr tracking.',
   'auth.createAccount': 'Sign In / Create Account',
+  'plans.errorCreate': 'An error occurred while creating the plan. Please try again.',
+  'plans.errorDelete': 'An error occurred while deleting the plan. Please try again.',
+  'plans.errorToggle': 'An error occurred while updating the plan status. Please try again.',
+  'plans.errorAddPrayer': 'An error occurred while adding the prayer. Please try again.',
+  'plans.errorRemovePrayer': 'An error occurred while removing the prayer. Please try again.',
+  'plans.errorLoadPlans': 'An error occurred while loading plans. Please try again.',
+  'home.errorLoadPlans': 'An error occurred while loading data. Please try again.',
+  'home.retry': 'Retry',
+  'counter.errorUpdate': 'Update failed. Your counter could not be synchronized.',
   'prayerTimes.selectCountry': 'Select Country',
   'prayerTimes.selectCity': 'Select City',
   'prayerTimes.searchCountry': 'Search country...',
@@ -643,6 +670,15 @@ const ar: TranslationDict = {
   'auth.guestDashboardTitle': 'تابع تقدمك',
   'auth.guestDashboardDesc': 'سجل الدخول لإنشاء خطط أدعية شخصية ومتابعة ذكرك اليومي.',
   'auth.createAccount': 'دخول / إنشاء حساب',
+  'plans.errorCreate': 'حدث خطأ أثناء إنشاء الخطة. يرجى المحاولة مرة أخرى.',
+  'plans.errorDelete': 'حدث خطأ أثناء حذف الخطة. يرجى المحاولة مرة أخرى.',
+  'plans.errorToggle': 'حدث خطأ أثناء تحديث حالة الخطة. يرجى المحاولة مرة أخرى.',
+  'plans.errorAddPrayer': 'حدث خطأ أثناء إضافة الدعاء. يرجى المحاولة مرة أخرى.',
+  'plans.errorRemovePrayer': 'حدث خطأ أثناء إزالة الدعاء. يرجى المحاولة مرة أخرى.',
+  'plans.errorLoadPlans': 'حدث خطأ أثناء تحميل الخطط. يرجى المحاولة مرة أخرى.',
+  'home.errorLoadPlans': 'حدث خطأ أثناء تحميل البيانات. يرجى المحاولة مرة أخرى.',
+  'home.retry': 'إعادة المحاولة',
+  'counter.errorUpdate': 'فشل التحديث. تعذر مزامنة العداد.',
   'prayerTimes.selectCountry': 'اختر الدولة',
   'prayerTimes.selectCity': 'اختر المدينة',
   'prayerTimes.searchCountry': 'ابحث عن دولة...',
@@ -806,6 +842,15 @@ const de: TranslationDict = {
   'auth.guestDashboardTitle': 'Verfolgen Sie Ihren Fortschritt',
   'auth.guestDashboardDesc': 'Melden Sie sich an, um persönliche Gebetspläne zu erstellen und Ihr tägliches Dhikr-Tracking fortzusetzen.',
   'auth.createAccount': 'Anmelden / Konto erstellen',
+  'plans.errorCreate': 'Beim Erstellen des Plans ist ein Fehler aufgetreten. Bitte erneut versuchen.',
+  'plans.errorDelete': 'Beim Löschen des Plans ist ein Fehler aufgetreten. Bitte erneut versuchen.',
+  'plans.errorToggle': 'Beim Aktualisieren des Planstatus ist ein Fehler aufgetreten. Bitte erneut versuchen.',
+  'plans.errorAddPrayer': 'Beim Hinzufügen des Gebets ist ein Fehler aufgetreten. Bitte erneut versuchen.',
+  'plans.errorRemovePrayer': 'Beim Entfernen des Gebets ist ein Fehler aufgetreten. Bitte erneut versuchen.',
+  'plans.errorLoadPlans': 'Beim Laden der Pläne ist ein Fehler aufgetreten. Bitte erneut versuchen.',
+  'home.errorLoadPlans': 'Beim Laden der Daten ist ein Fehler aufgetreten. Bitte erneut versuchen.',
+  'home.retry': 'Erneut versuchen',
+  'counter.errorUpdate': 'Aktualisierung fehlgeschlagen. Ihr Zähler konnte nicht synchronisiert werden.',
   'prayerTimes.selectCountry': 'Land auswählen',
   'prayerTimes.selectCity': 'Stadt auswählen',
   'prayerTimes.searchCountry': 'Land suchen...',
@@ -969,6 +1014,15 @@ const fr: TranslationDict = {
   'auth.guestDashboardTitle': 'Suivez votre progression',
   'auth.guestDashboardDesc': 'Connectez-vous pour créer vos plans de prière personnels et suivre votre dhikr quotidien.',
   'auth.createAccount': 'Se connecter / Créer un compte',
+  'plans.errorCreate': 'Une erreur est survenue lors de la création du plan. Veuillez réessayer.',
+  'plans.errorDelete': 'Une erreur est survenue lors de la suppression du plan. Veuillez réessayer.',
+  'plans.errorToggle': 'Une erreur est survenue lors de la mise à jour du statut du plan. Veuillez réessayer.',
+  'plans.errorAddPrayer': 'Une erreur est survenue lors de l\'ajout de la prière. Veuillez réessayer.',
+  'plans.errorRemovePrayer': 'Une erreur est survenue lors du retrait de la prière. Veuillez réessayer.',
+  'plans.errorLoadPlans': 'Une erreur est survenue lors du chargement des plans. Veuillez réessayer.',
+  'home.errorLoadPlans': 'Une erreur est survenue lors du chargement des données. Veuillez réessayer.',
+  'home.retry': 'Réessayer',
+  'counter.errorUpdate': 'Échec de la mise à jour. Votre compteur n\'a pas pu être synchronisé.',
   'prayerTimes.selectCountry': 'Sélectionner un pays',
   'prayerTimes.selectCity': 'Sélectionner une ville',
   'prayerTimes.searchCountry': 'Rechercher un pays...',
