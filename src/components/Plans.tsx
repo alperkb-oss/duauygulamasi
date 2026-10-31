@@ -7,6 +7,7 @@ import { AuthModal } from './AuthModal';
 import { useAuth, isAuthenticated } from '@/lib/auth';
 import { useI18n } from '@/lib/i18n';
 import type { TranslationKey } from '@/lib/translations';
+import { toLocalDateString } from '@/lib/planProgress';
 
 export function Plans() {
   const { t } = useI18n();
@@ -59,11 +60,16 @@ export function Plans() {
       setPlans(data as ReadingPlan[]);
       const detailsMap: Record<string, PlanDetailWithPrayer[]> = {};
       for (const plan of data) {
-        const { data: details } = await supabase
+        const { data: details, error: detailsErr } = await supabase
           .from('plan_details')
           .select('*, prayers(*)')
           .eq('plan_id', plan.id)
           .order('sequence_order', { ascending: true });
+        if (detailsErr) {
+          setLoadError(true);
+          setLoading(false);
+          return;
+        }
         detailsMap[plan.id] = (details || []) as PlanDetailWithPrayer[];
       }
       setPlanDetailsMap(detailsMap);
@@ -85,7 +91,12 @@ export function Plans() {
     setErrorMsg(null);
     const { data, error } = await supabase
       .from('reading_plans')
-      .insert({ plan_name: newPlanName.trim(), is_active: plans.length === 0, user_id: authState.user.id })
+      .insert({
+        plan_name: newPlanName.trim(),
+        is_active: plans.length === 0,
+        user_id: authState.user.id,
+        start_date: toLocalDateString(new Date()),
+      })
       .select()
       .single();
 
@@ -133,20 +144,6 @@ export function Plans() {
       return;
     }
 
-    const { error: progressErr } = await supabase.from('user_daily_progress').insert({
-      plan_detail_id: detail.id,
-      current_day_number: 1,
-      morning_count_done: 0,
-      evening_count_done: 0,
-      is_morning_completed: false,
-      is_evening_completed: false,
-      date: new Date().toISOString().split('T')[0],
-    });
-
-    if (progressErr) {
-      setErrorMsg('plans.errorAddPrayer');
-      return;
-    }
     setShowAddPrayer(null);
     await loadPlans();
   };

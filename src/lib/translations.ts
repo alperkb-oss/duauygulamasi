@@ -23,7 +23,9 @@ export type TranslationKey =
   | 'home.overallProgress'
   | 'home.currentPriority'
   | 'home.allPrayers'
-  | 'home.dayXOfY'
+  | 'home.dayLabel'
+  | 'home.planNotStarted'
+  | 'home.planCompleted'
   | 'home.morning'
   | 'home.evening'
   | 'home.prayersCompleted'
@@ -197,7 +199,9 @@ const tr: TranslationDict = {
   'home.overallProgress': 'Genel İlerleme',
   'home.currentPriority': 'Şu Anki Önceliğiniz',
   'home.allPrayers': 'Tüm Dualar (Sıralı)',
-  'home.dayXOfY': 'Günün',
+  'home.dayLabel': 'Gün',
+  'home.planNotStarted': 'Bu plan henüz başlamadı.',
+  'home.planCompleted': 'Bu plan tamamlandı.',
   'home.morning': 'Sabah',
   'home.evening': 'Akşam',
   'home.prayersCompleted': 'dua tamamlandı',
@@ -370,7 +374,9 @@ const en: TranslationDict = {
   'home.overallProgress': 'Overall Progress',
   'home.currentPriority': 'Your Current Priority',
   'home.allPrayers': 'All Prayers (Sequential)',
-  'home.dayXOfY': 'Day',
+  'home.dayLabel': 'Day',
+  'home.planNotStarted': 'This plan has not started yet.',
+  'home.planCompleted': 'This plan is completed.',
   'home.morning': 'Morning',
   'home.evening': 'Evening',
   'home.prayersCompleted': 'prayers completed',
@@ -543,7 +549,9 @@ const ar: TranslationDict = {
   'home.overallProgress': 'التقدم العام',
   'home.currentPriority': 'أولويتك الحالية',
   'home.allPrayers': 'جميع الأدعية (بالترتيب)',
-  'home.dayXOfY': 'يوم',
+  'home.dayLabel': 'يوم',
+  'home.planNotStarted': 'لم تبدأ هذه الخطة بعد.',
+  'home.planCompleted': 'اكتملت هذه الخطة.',
   'home.morning': 'صباح',
   'home.evening': 'مساء',
   'home.prayersCompleted': 'دعاء مكتمل',
@@ -716,7 +724,9 @@ const de: TranslationDict = {
   'home.overallProgress': 'Gesamtfortschritt',
   'home.currentPriority': 'Ihre aktuelle Priorität',
   'home.allPrayers': 'Alle Gebete (Reihenfolge)',
-  'home.dayXOfY': 'Tag',
+  'home.dayLabel': 'Tag',
+  'home.planNotStarted': 'Dieser Plan hat noch nicht begonnen.',
+  'home.planCompleted': 'Dieser Plan ist abgeschlossen.',
   'home.morning': 'Morgen',
   'home.evening': 'Abend',
   'home.prayersCompleted': 'Gebete abgeschlossen',
@@ -889,7 +899,9 @@ const fr: TranslationDict = {
   'home.overallProgress': 'Progrès Général',
   'home.currentPriority': 'Votre Priorité Actuelle',
   'home.allPrayers': 'Toutes les Prières (Ordre)',
-  'home.dayXOfY': 'Jour',
+  'home.dayLabel': 'Jour',
+  'home.planNotStarted': 'Ce plan n’a pas encore commencé.',
+  'home.planCompleted': 'Ce plan est terminé.',
   'home.morning': 'Matin',
   'home.evening': 'Soir',
   'home.prayersCompleted': 'prières terminées',

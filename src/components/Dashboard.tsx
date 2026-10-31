@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Sun, Moon, ChevronRight, Calendar, Sparkles, TrendingUp, Settings as SettingsIcon, BookOpen, Library as LibraryIcon, Clock, CircleDot, AlertCircle, RefreshCw, ChevronDown } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import type { ReadingPlan, PlanDetailWithProgress, UserDailyProgress } from '@/lib/supabase';
@@ -8,6 +8,12 @@ import { AuthModal } from './AuthModal';
 import { useAuth, isAuthenticated } from '@/lib/auth';
 import { useI18n } from '@/lib/i18n';
 import type { TranslationKey } from '@/lib/translations';
+import {
+  ensureDailyProgress,
+  getDayStatus,
+  getPlanDayNumber,
+  toLocalDateString,
+} from '@/lib/planProgress';
 
 type DashboardProps = {
   onNavigate: (page: 'dashboard' | 'plans' | 'library' | 'settings' | 'prayer-times' | 'tasbih') => void;
@@ -34,22 +40,49 @@ export function Dashboard({ onNavigate }: DashboardProps) {
   } | null>(null);
 
   const isAuthed = isAuthenticated(authState);
+  const loadedDateRef = useRef<string | null>(null);
 
-  useEffect(() => {
-    if (authState.status === 'loading') return;
-    if (!isAuthed) {
-      setPlans([]);
-      setActivePlan(null);
-      setPlanDetails([]);
+  const loadPlanDetails = useCallback(async (plan: ReadingPlan) => {
+    const today = toLocalDateString(new Date());
+    const fetchDetails = () =>
+      supabase
+        .from('plan_details')
+        .select('*, prayers(*), user_daily_progress(*)')
+        .eq('plan_id', plan.id)
+        .eq('user_daily_progress.date', today)
+        .order('sequence_order', { ascending: true });
+
+    let { data, error } = await fetchDetails();
+
+    if (!error && data) {
+      const dayNumber = getPlanDayNumber(plan.start_date, today);
+      const missing = (data as PlanDetailWithProgress[])
+        .filter(
+          (pd) =>
+            pd.user_daily_progress.length === 0 &&
+            getDayStatus(dayNumber, pd.target_days) === 'active'
+        )
+        .map((pd) => ({ planDetailId: pd.id, dayNumber }));
+
+      if (missing.length > 0) {
+        error = await ensureDailyProgress(missing, today);
+        if (!error) ({ data, error } = await fetchDetails());
+      }
+    }
+
+    if (error || !data) {
+      setLoadError(true);
       setLoading(false);
-      setLoadError(false);
       return;
     }
-    setLoadError(false);
-    loadData();
-  }, [authState.status, isAuthed]);
 
-  const loadData = async () => {
+    loadedDateRef.current = today;
+    setCounterState(null);
+    setPlanDetails(data as PlanDetailWithProgress[]);
+    setLoading(false);
+  }, []);
+
+  const loadData = useCallback(async () => {
     setLoading(true);
     setLoadError(false);
     const { data: planData, error } = await supabase
@@ -64,6 +97,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
     }
 
     if (!planData || planData.length === 0) {
+      setPlans([]);
       setLoading(false);
       return;
     }
@@ -71,26 +105,48 @@ export function Dashboard({ onNavigate }: DashboardProps) {
     setPlans(planData);
     const active = planData.find((p) => p.is_active) || planData[0];
     setActivePlan(active);
-    await loadPlanDetails(active.id);
-  };
+    await loadPlanDetails(active);
+  }, [loadPlanDetails]);
 
-  const loadPlanDetails = async (planId: string) => {
-    const { data } = await supabase
-      .from('plan_details')
-      .select('*, prayers(*), user_daily_progress(*)')
-      .eq('plan_id', planId)
-      .order('sequence_order', { ascending: true });
-
-    if (data) {
-      setPlanDetails(data as PlanDetailWithProgress[]);
+  useEffect(() => {
+    if (authState.status === 'loading') return;
+    if (!isAuthed) {
+      loadedDateRef.current = null;
+      setPlans([]);
+      setActivePlan(null);
+      setPlanDetails([]);
+      setLoading(false);
+      setLoadError(false);
+      return;
     }
-    setLoading(false);
-  };
+    setLoadError(false);
+    loadData();
+  }, [authState.status, isAuthed, loadData]);
+
+  useEffect(() => {
+    const refreshIfDateChanged = () => {
+      const loadedDate = loadedDateRef.current;
+      if (loadedDate && loadedDate !== toLocalDateString(new Date())) {
+        loadData();
+      }
+    };
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible') refreshIfDateChanged();
+    };
+    window.addEventListener('focus', refreshIfDateChanged);
+    document.addEventListener('visibilitychange', handleVisibility);
+    const timer = window.setInterval(refreshIfDateChanged, 60_000);
+    return () => {
+      window.removeEventListener('focus', refreshIfDateChanged);
+      document.removeEventListener('visibilitychange', handleVisibility);
+      window.clearInterval(timer);
+    };
+  }, [loadData]);
 
   const handlePlanSwitch = async (plan: ReadingPlan) => {
     setActivePlan(plan);
     setLoading(true);
-    await loadPlanDetails(plan.id);
+    await loadPlanDetails(plan);
   };
 
   const handleProgressUpdate = (updated: UserDailyProgress) => {
@@ -104,47 +160,44 @@ export function Dashboard({ onNavigate }: DashboardProps) {
     );
   };
 
+  const today = toLocalDateString(new Date());
+  const dayNumber = activePlan ? getPlanDayNumber(activePlan.start_date, today) : 0;
+  const statusOf = (pd: PlanDetailWithProgress) => getDayStatus(dayNumber, pd.target_days);
+  const isPlanCompleted =
+    planDetails.length > 0 && planDetails.every((pd) => statusOf(pd) === 'completed');
+  const isPlanNotStarted =
+    planDetails.length > 0 && planDetails.every((pd) => statusOf(pd) === 'not_started');
+
   const currentDetail = selectedDetailId
     ? planDetails.find((pd) => pd.id === selectedDetailId) || null
     : planDetails.find((pd) => {
+        if (statusOf(pd) !== 'active') return false;
         const progress = pd.user_daily_progress[0];
         if (!progress) return false;
         return !progress.is_morning_completed || !progress.is_evening_completed;
       }) || null;
 
-  const dailyProgress = (() => {
-    let totalDone = 0;
-    let totalTarget = 0;
-    for (const pd of planDetails) {
-      totalTarget += pd.target_count_morning + pd.target_count_evening;
-      const p = pd.user_daily_progress[0];
-      if (p) {
-        totalDone += Math.min(p.morning_count_done, pd.target_count_morning);
-        totalDone += Math.min(p.evening_count_done, pd.target_count_evening);
-      }
-    }
-    return totalTarget > 0 ? Math.min(Math.round((totalDone / totalTarget) * 100), 100) : 0;
-  })();
+  const activeDetails = planDetails.filter((pd) => statusOf(pd) === 'active');
 
-  const dailyRepetitionsDone = (() => {
-    let totalDone = 0;
-    for (const pd of planDetails) {
-      const p = pd.user_daily_progress[0];
-      if (p) {
-        totalDone += Math.min(p.morning_count_done, pd.target_count_morning);
-        totalDone += Math.min(p.evening_count_done, pd.target_count_evening);
-      }
-    }
-    return totalDone;
-  })();
+  const dailyRepetitionsTarget = activeDetails.reduce(
+    (total, pd) => total + pd.target_count_morning + pd.target_count_evening,
+    0
+  );
 
-  const dailyRepetitionsTarget = (() => {
-    let total = 0;
-    for (const pd of planDetails) {
-      total += pd.target_count_morning + pd.target_count_evening;
-    }
-    return total;
-  })();
+  const dailyRepetitionsDone = activeDetails.reduce((total, pd) => {
+    const p = pd.user_daily_progress[0];
+    if (!p) return total;
+    return (
+      total +
+      Math.min(p.morning_count_done, pd.target_count_morning) +
+      Math.min(p.evening_count_done, pd.target_count_evening)
+    );
+  }, 0);
+
+  const dailyProgress =
+    dailyRepetitionsTarget > 0
+      ? Math.min(Math.round((dailyRepetitionsDone / dailyRepetitionsTarget) * 100), 100)
+      : 0;
 
   const localeMap: Record<string, string> = {
     tr: 'tr-TR', en: 'en-US', ar: 'ar-SA', de: 'de-DE', fr: 'fr-FR',
@@ -270,6 +323,16 @@ export function Dashboard({ onNavigate }: DashboardProps) {
           )}
 
           {/* Overall progress card */}
+          {(isPlanCompleted || isPlanNotStarted) && (
+            <div className="glass-card p-5 flex items-center gap-3">
+              <Calendar className="w-5 h-5 text-gold-400 shrink-0" />
+              <p className="text-sm text-midnight-200">
+                {isPlanCompleted ? t('home.planCompleted') : t('home.planNotStarted')}
+              </p>
+            </div>
+          )}
+
+          {/* Overall progress card */}
           <div className="glass-card p-5">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
@@ -352,13 +415,22 @@ export function Dashboard({ onNavigate }: DashboardProps) {
                         <div className="flex items-center gap-2">
                           <Calendar className="w-4 h-4 text-midnight-400" />
                           <span className="text-sm text-midnight-300">
-                            {pd.target_days} {t('home.dayXOfY')}{' '}
-                            <span className="font-bold text-gold-100">
-                              {progress?.current_day_number || 1}.
-                            </span>
+                            {statusOf(pd) === 'active' ? (
+                              <>
+                                {t('home.dayLabel')}{' '}
+                                <span className="font-bold text-gold-100">
+                                  {dayNumber}/{pd.target_days}
+                                </span>
+                              </>
+                            ) : statusOf(pd) === 'completed' ? (
+                              t('home.planCompleted')
+                            ) : (
+                              t('home.planNotStarted')
+                            )}
                           </span>
                         </div>
 
+                        {statusOf(pd) === 'active' && (
                         <div className="grid grid-cols-2 gap-3">
                           <SessionSlot
                             icon="morning"
@@ -401,6 +473,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
                             }}
                           />
                         </div>
+                        )}
                       </div>
                     )}
                   </div>
