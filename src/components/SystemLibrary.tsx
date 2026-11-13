@@ -138,6 +138,12 @@ export function SystemLibrary() {
         </FilterRow>
       )}
 
+      {activePurpose && purposes.find((p) => p.id === activePurpose)?.description_tr && (
+        <p className="text-sm text-midnight-300 leading-relaxed animate-slide-up">
+          {purposes.find((p) => p.id === activePurpose)?.description_tr}
+        </p>
+      )}
+
       {filtered.length === 0 ? (
         <div className="flex flex-col items-center justify-center min-h-[40vh] text-center">
           <BookOpen className="w-10 h-10 text-midnight-600 mb-3" />

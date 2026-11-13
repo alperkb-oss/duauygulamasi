@@ -33,6 +33,7 @@ export type PurposeGroup = {
   code: string;
   name_tr: string;
   name_en: string | null;
+  description_tr: string | null;
   sort_order: number;
 };
 
