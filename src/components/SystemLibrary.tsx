@@ -1,10 +1,11 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { Search, BookOpen, Hash, Clock, Sparkles, Sunrise, Moon } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
-import type { Prayer, PurposeGroup, RecommendationBasis } from '@/lib/supabase';
+import type { ContentType, Prayer, PurposeGroup, RecommendationBasis } from '@/lib/supabase';
 import { useI18n } from '@/lib/i18n';
 import { purposeLabel } from '@/lib/purposes';
 import type { TranslationKey } from '@/lib/translations';
+import { EducationalContent } from '@/components/EducationalContent';
 
 const BASIS_KEYS: Record<RecommendationBasis, TranslationKey> = {
   hadith: 'library.basisHadith',
@@ -21,6 +22,17 @@ const BASIS_STYLES: Record<RecommendationBasis, string> = {
   traditional: 'bg-midnight-800/60 text-midnight-300 border-midnight-700',
   unspecified: 'bg-midnight-800/60 text-midnight-300 border-midnight-700',
 };
+
+const DUA_CONTENT_TYPES: ContentType[] = ['Dua', 'Sure', 'Ayet'];
+
+const CONTENT_TYPE_KEYS: Partial<Record<ContentType, TranslationKey>> = {
+  Dua: 'library.typeDua',
+  Sure: 'library.typeSure',
+  Ayet: 'library.typeAyet',
+};
+
+const isDuaPrayer = (prayer: Prayer) =>
+  prayer.content_type !== null && DUA_CONTENT_TYPES.includes(prayer.content_type);
 
 export function SystemLibrary() {
   const { t, lang } = useI18n();
@@ -74,6 +86,8 @@ export function SystemLibrary() {
       !activePurpose || (prayersByPurpose.get(activePurpose)?.has(p.id) ?? false);
     return matchesSearch && matchesCategory && matchesPurpose;
   });
+  const duaPrayers = filtered.filter(isDuaPrayer);
+  const otherPrayers = filtered.filter((p) => !isDuaPrayer(p));
 
   if (loading) {
     return (
@@ -150,12 +164,28 @@ export function SystemLibrary() {
           <p className="text-sm text-midnight-400">{t('library.noResults')}</p>
         </div>
       ) : (
-        <div className="space-y-3">
-          {filtered.map((prayer) => (
-            <PrayerCard key={prayer.id} prayer={prayer} />
-          ))}
+        <div className="space-y-8">
+          {otherPrayers.length > 0 && (
+            <div className="space-y-3">
+              {otherPrayers.map((prayer) => (
+                <PrayerCard key={prayer.id} prayer={prayer} />
+              ))}
+            </div>
+          )}
+          {duaPrayers.length > 0 && (
+            <section className="space-y-3">
+              <h2 className="text-lg font-display font-bold text-gold-100 pb-2 border-b border-emerald-800/30">
+                {t('library.duaSectionTitle')}
+              </h2>
+              {duaPrayers.map((prayer) => (
+                <PrayerCard key={prayer.id} prayer={prayer} />
+              ))}
+            </section>
+          )}
         </div>
       )}
+
+      {!query && !activeCategory && !activePurpose && <EducationalContent />}
     </div>
   );
 }
@@ -183,6 +213,7 @@ function PrayerCard({ prayer }: { prayer: Prayer }) {
   const { t } = useI18n();
   const [expanded, setExpanded] = useState(false);
   const hasDetails = Boolean(prayer.arabic_text || prayer.meaning || prayer.source_reference);
+  const typeKey = prayer.content_type ? CONTENT_TYPE_KEYS[prayer.content_type] : undefined;
 
   return (
     <div className="glass-card overflow-hidden">
@@ -194,6 +225,11 @@ function PrayerCard({ prayer }: { prayer: Prayer }) {
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1">
               <h3 className="text-lg font-display font-bold text-gold-100">{prayer.name}</h3>
+              {typeKey && (
+                <span className="shrink-0 px-2 py-0.5 rounded-full text-[10px] font-medium bg-emerald2-500/10 text-emerald2-400 border border-emerald2-500/30">
+                  {t(typeKey)}
+                </span>
+              )}
             </div>
             {prayer.turkish_transliteration && (
               <p className="text-xs text-midnight-500 mt-0.5 italic font-arabic leading-relaxed">

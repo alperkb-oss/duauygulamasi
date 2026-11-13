@@ -83,6 +83,14 @@ export type TranslationKey =
   | 'library.basisEbced'
   | 'library.basisTraditional'
   | 'library.basisUnspecified'
+  | 'library.duaSectionTitle'
+  | 'library.typeDua'
+  | 'library.typeSure'
+  | 'library.typeAyet'
+  | 'library.educationTitle'
+  | 'library.educationNote'
+  | 'library.educationNamaz'
+  | 'library.educationAbdest'
   | 'counter.session'
   | 'counter.morningSession'
   | 'counter.eveningSession'
@@ -282,6 +290,14 @@ const tr: TranslationDict = {
   'library.basisEbced': 'Ebced hesabı (hadis değildir)',
   'library.basisTraditional': 'Geleneksel tavsiye',
   'library.basisUnspecified': 'Belirtilmemiş',
+  'library.duaSectionTitle': 'Namazda Okunan Başlıca Dualar',
+  'library.typeDua': 'Dua',
+  'library.typeSure': 'Sure',
+  'library.typeAyet': 'Ayet',
+  'library.educationTitle': 'Namaz ve Abdest',
+  'library.educationNote': 'Bu bölüm yalnızca okumak içindir.',
+  'library.educationNamaz': 'Namaz',
+  'library.educationAbdest': 'Abdest',
   'counter.session': 'Seansı',
   'counter.morningSession': 'Sabah Seansı',
   'counter.eveningSession': 'Akşam Seansı',
@@ -480,6 +496,14 @@ const en: TranslationDict = {
   'library.basisEbced': 'Ebjad calculation (not a hadith)',
   'library.basisTraditional': 'Traditional recommendation',
   'library.basisUnspecified': 'Unspecified',
+  'library.duaSectionTitle': 'Namazda Okunan Başlıca Dualar',
+  'library.typeDua': 'Prayer',
+  'library.typeSure': 'Surah',
+  'library.typeAyet': 'Verse',
+  'library.educationTitle': 'Salah and Wudu',
+  'library.educationNote': 'Reference content. Read only.',
+  'library.educationNamaz': 'Salah',
+  'library.educationAbdest': 'Wudu',
   'counter.session': 'Session',
   'counter.morningSession': 'Morning Session',
   'counter.eveningSession': 'Evening Session',
@@ -678,6 +702,14 @@ const ar: TranslationDict = {
   'library.basisEbced': 'حساب الجمل (ليس حديثًا)',
   'library.basisTraditional': 'توصية تقليدية',
   'library.basisUnspecified': 'غير محدد',
+  'library.duaSectionTitle': 'Namazda Okunan Başlıca Dualar',
+  'library.typeDua': 'دعاء',
+  'library.typeSure': 'سورة',
+  'library.typeAyet': 'آية',
+  'library.educationTitle': 'الصلاة والوضوء',
+  'library.educationNote': 'للقراءة فقط.',
+  'library.educationNamaz': 'الصلاة',
+  'library.educationAbdest': 'الوضوء',
   'counter.session': 'جلسة',
   'counter.morningSession': 'جلسة الصباح',
   'counter.eveningSession': 'جلسة المساء',
@@ -876,6 +908,14 @@ const de: TranslationDict = {
   'library.basisEbced': 'Abdschad-Berechnung (kein Hadith)',
   'library.basisTraditional': 'Traditionelle Empfehlung',
   'library.basisUnspecified': 'Nicht angegeben',
+  'library.duaSectionTitle': 'Namazda Okunan Başlıca Dualar',
+  'library.typeDua': 'Bittgebet',
+  'library.typeSure': 'Sure',
+  'library.typeAyet': 'Vers',
+  'library.educationTitle': 'Salat und Wudu',
+  'library.educationNote': 'Nur zum Lesen.',
+  'library.educationNamaz': 'Salat',
+  'library.educationAbdest': 'Wudu',
   'counter.session': 'Sitzung',
   'counter.morningSession': 'Morgensitzung',
   'counter.eveningSession': 'Abendsitzung',
@@ -1074,6 +1114,14 @@ const fr: TranslationDict = {
   'library.basisEbced': 'Calcul abjad (pas un hadith)',
   'library.basisTraditional': 'Recommandation traditionnelle',
   'library.basisUnspecified': 'Non précisé',
+  'library.duaSectionTitle': 'Namazda Okunan Başlıca Dualar',
+  'library.typeDua': 'Invocation',
+  'library.typeSure': 'Sourate',
+  'library.typeAyet': 'Verset',
+  'library.educationTitle': 'Prière et ablutions',
+  'library.educationNote': 'Contenu de référence, en lecture seule.',
+  'library.educationNamaz': 'Prière',
+  'library.educationAbdest': 'Ablutions',
   'counter.session': 'Session',
   'counter.morningSession': 'Session du Matin',
   'counter.eveningSession': 'Session du Soir',

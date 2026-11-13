@@ -5,7 +5,7 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-export type ContentType = 'Dua' | 'Zikir' | 'Esma' | 'Namaz' | 'Abdest';
+export type ContentType = 'Dua' | 'Sure' | 'Ayet' | 'Zikir' | 'Esma' | 'Namaz' | 'Abdest';
 export type RecommendationBasis = 'hadith' | 'quran' | 'ebced' | 'traditional' | 'unspecified';
 export type VerificationStatus = 'verified' | 'pending' | 'unverified';
 
@@ -26,6 +26,17 @@ export type Prayer = {
   suggested_count: string | null;
   suggested_time: string | null;
   created_at: string;
+};
+
+export type EducationalTopic = 'namaz' | 'abdest';
+export type EducationalKind = 'title' | 'heading' | 'paragraph' | 'table_row';
+
+export type EducationalRow = {
+  id: string;
+  topic: EducationalTopic;
+  sort_order: number;
+  kind: EducationalKind;
+  cells: string[];
 };
 
 export type PurposeGroup = {
