@@ -5,13 +5,46 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
+export type ContentType = 'Dua' | 'Zikir' | 'Esma' | 'Namaz' | 'Abdest';
+export type RecommendationBasis = 'hadith' | 'quran' | 'ebced' | 'traditional' | 'unspecified';
+export type VerificationStatus = 'verified' | 'pending' | 'unverified';
+
 export type Prayer = {
   id: string;
   name: string;
   category: string;
+  subcategory: string | null;
+  content_type: ContentType | null;
+  arabic_text: string | null;
   turkish_transliteration: string | null;
   meaning: string | null;
+  source_reference: string | null;
+  verification_status: VerificationStatus;
+  recommendation_basis: RecommendationBasis;
+  requires_counter: boolean;
   priority_score: number;
+  suggested_count: string | null;
+  suggested_time: string | null;
+  created_at: string;
+};
+
+export type PurposeGroup = {
+  id: string;
+  code: string;
+  name_tr: string;
+  name_en: string | null;
+  sort_order: number;
+};
+
+export type PersonalLibraryEntry = {
+  id: string;
+  user_id: string;
+  arabic_text: string | null;
+  transliteration: string | null;
+  meaning: string | null;
+  purpose_id: string | null;
+  category: string | null;
+  sources: string | null;
   suggested_count: string | null;
   suggested_time: string | null;
   created_at: string;
