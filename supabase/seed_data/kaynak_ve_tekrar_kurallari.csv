@@ -1,0 +1,10 @@
+﻿Konu,Uygulama kuralı
+Önerilen tekrar,Kullanıcı plan oluştururken öneri olarak göster; düzenlenebilir.
+Hadis dayanağı,Kaynak künyesi ve tekrar sayısının aynı rivayette geçip geçmediği ayrıca doğrulanmalı.
+Kur’an ayeti,"Ayetin Kur’an’da bulunması, belirli sayıda/özel amaçla okunması iddiasını tek başına doğrulamaz."
+Ebced,Ebced değeri ile önerilen tekrar sayısını ayrı alanlarda tut; hadis kaynaklı gösterme.
+Esma tekrarları,Mevcut Ebced sayıları korunur; dayanak türü: Ebced / geleneksel uygulama; hadis doğrulaması yok.
+Kaynak güvenilirliği,Sahih hadis / diğer rivayet / Kur’an / geleneksel uygulama / doğrulanmadı şeklinde editoryal etiket kullan.
+Dini vaatler,Belirli sayıda okumanın kesin sonuç doğuracağı yönünde vaat oluşturma.
+Amaç filtresi,"Birincil amaç zorunlu, ikincil amaç isteğe bağlı; özel zaman ayrı filtre."
+Mevcut veriler,Orijinal A:H sütunları ve diğer çalışma sayfaları korunmuştur.
