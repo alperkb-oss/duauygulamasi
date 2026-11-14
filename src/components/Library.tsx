@@ -34,7 +34,10 @@ export function Library() {
         ))}
       </div>
 
-      {tab === 'system' ? <SystemLibrary /> : <PersonalLibrary />}
+      <div className={tab === 'system' ? undefined : 'hidden'}>
+        <SystemLibrary />
+      </div>
+      {tab === 'personal' && <PersonalLibrary />}
     </div>
   );
 }

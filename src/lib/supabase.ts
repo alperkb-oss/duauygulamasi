@@ -25,7 +25,15 @@ export type Prayer = {
   priority_score: number;
   suggested_count: string | null;
   suggested_time: string | null;
+  count_note: string | null;
+  purpose_note: string | null;
   created_at: string;
+};
+
+export type PrayerPurposeLink = {
+  prayer_id: string;
+  purpose_id: string;
+  is_primary: boolean;
 };
 
 export type EducationalTopic = 'namaz' | 'abdest';

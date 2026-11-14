@@ -54,6 +54,7 @@ export type TranslationKey =
   | 'library.title'
   | 'library.registered'
   | 'library.searchPlaceholder'
+  | 'library.searchPrayers'
   | 'library.all'
   | 'library.noResults'
   | 'library.meaning'
@@ -87,10 +88,30 @@ export type TranslationKey =
   | 'library.typeDua'
   | 'library.typeSure'
   | 'library.typeAyet'
-  | 'library.educationTitle'
   | 'library.educationNote'
-  | 'library.educationNamaz'
-  | 'library.educationAbdest'
+  | 'library.sectionQuran'
+  | 'library.sectionDua'
+  | 'library.sectionZikir'
+  | 'library.sectionEsma'
+  | 'library.sectionNamaz'
+  | 'library.sectionAbdest'
+  | 'library.quranComingSoon'
+  | 'library.groupByPurpose'
+  | 'library.primaryPurpose'
+  | 'library.secondaryPurpose'
+  | 'library.recitedIn'
+  | 'library.recitationReason'
+  | 'library.religiousStatus'
+  | 'library.notVerified'
+  | 'library.verification'
+  | 'library.statusVerified'
+  | 'library.statusPending'
+  | 'library.statusUnverified'
+  | 'library.duration'
+  | 'library.notes'
+  | 'library.closeViewer'
+  | 'library.readFullScreen'
+  | 'library.ebcedNote'
   | 'counter.session'
   | 'counter.morningSession'
   | 'counter.eveningSession'
@@ -261,6 +282,7 @@ const tr: TranslationDict = {
   'library.title': 'Dua Kütüphanesi',
   'library.registered': 'dua kayıtlı',
   'library.searchPlaceholder': 'Dua, anlam veya kategori ara...',
+  'library.searchPrayers': 'Ad, okunuş veya anlam ara...',
   'library.all': 'Tümü',
   'library.noResults': 'Sonuç bulunamadı.',
   'library.meaning': 'Anlamı / Amacı',
@@ -294,10 +316,30 @@ const tr: TranslationDict = {
   'library.typeDua': 'Dua',
   'library.typeSure': 'Sure',
   'library.typeAyet': 'Ayet',
-  'library.educationTitle': 'Namaz ve Abdest',
   'library.educationNote': 'Bu bölüm yalnızca okumak içindir.',
-  'library.educationNamaz': 'Namaz',
-  'library.educationAbdest': 'Abdest',
+  'library.sectionQuran': 'Kur\'an',
+  'library.sectionDua': 'Namaz Duaları',
+  'library.sectionZikir': 'Zikirler',
+  'library.sectionEsma': 'Esma-ül Hüsna',
+  'library.sectionNamaz': 'Namaz Rehberi',
+  'library.sectionAbdest': 'Abdest Rehberi',
+  'library.quranComingSoon': 'İçerik yakında eklenecek.',
+  'library.groupByPurpose': 'Amaca göre grupla',
+  'library.primaryPurpose': 'Ana amaç',
+  'library.secondaryPurpose': 'İkincil amaç',
+  'library.recitedIn': 'Hangi namazlarda okunur',
+  'library.recitationReason': 'Okunma amacı ve işlevi',
+  'library.religiousStatus': 'Dini hüküm',
+  'library.notVerified': 'Henüz doğrulanmadı',
+  'library.verification': 'Doğrulama durumu',
+  'library.statusVerified': 'Doğrulandı',
+  'library.statusPending': 'Gözden geçiriliyor',
+  'library.statusUnverified': 'Doğrulanmadı',
+  'library.duration': 'Süre',
+  'library.notes': 'Notlar',
+  'library.closeViewer': 'Kapat',
+  'library.readFullScreen': 'Tam ekranda oku',
+  'library.ebcedNote': 'Ebced hesabına dayalı, isteğe bağlı geleneksel bir öneridir; hadis olarak sunulmaz.',
   'counter.session': 'Seansı',
   'counter.morningSession': 'Sabah Seansı',
   'counter.eveningSession': 'Akşam Seansı',
@@ -467,6 +509,7 @@ const en: TranslationDict = {
   'library.title': 'Prayer Library',
   'library.registered': 'prayers registered',
   'library.searchPlaceholder': 'Search prayer, meaning or category...',
+  'library.searchPrayers': 'Search by name, transliteration or meaning...',
   'library.all': 'All',
   'library.noResults': 'No results found.',
   'library.meaning': 'Meaning / Purpose',
@@ -500,10 +543,30 @@ const en: TranslationDict = {
   'library.typeDua': 'Prayer',
   'library.typeSure': 'Surah',
   'library.typeAyet': 'Verse',
-  'library.educationTitle': 'Salah and Wudu',
   'library.educationNote': 'Reference content. Read only.',
-  'library.educationNamaz': 'Salah',
-  'library.educationAbdest': 'Wudu',
+  'library.sectionQuran': 'Quran',
+  'library.sectionDua': 'Prayer Recitations',
+  'library.sectionZikir': 'Dhikr',
+  'library.sectionEsma': '99 Names of Allah',
+  'library.sectionNamaz': 'Salah Guide',
+  'library.sectionAbdest': 'Wudu Guide',
+  'library.quranComingSoon': 'Content coming soon.',
+  'library.groupByPurpose': 'Group by purpose',
+  'library.primaryPurpose': 'Primary',
+  'library.secondaryPurpose': 'Secondary',
+  'library.recitedIn': 'Where it is recited',
+  'library.recitationReason': 'Why it is recited',
+  'library.religiousStatus': 'Religious status',
+  'library.notVerified': 'Not yet verified',
+  'library.verification': 'Verification status',
+  'library.statusVerified': 'Verified',
+  'library.statusPending': 'Under review',
+  'library.statusUnverified': 'Unverified',
+  'library.duration': 'Duration',
+  'library.notes': 'Notes',
+  'library.closeViewer': 'Close',
+  'library.readFullScreen': 'Read full screen',
+  'library.ebcedNote': 'An optional traditional suggestion based on abjad numerology, not a hadith-based prescription.',
   'counter.session': 'Session',
   'counter.morningSession': 'Morning Session',
   'counter.eveningSession': 'Evening Session',
@@ -673,6 +736,7 @@ const ar: TranslationDict = {
   'library.title': 'مكتبة الأدعية',
   'library.registered': 'دعاء مسجل',
   'library.searchPlaceholder': 'ابحث عن دعاء أو معنى أو فئة...',
+  'library.searchPrayers': 'ابحث بالاسم أو النطق أو المعنى...',
   'library.all': 'الكل',
   'library.noResults': 'لا توجد نتائج.',
   'library.meaning': 'المعنى / الغرض',
@@ -706,10 +770,30 @@ const ar: TranslationDict = {
   'library.typeDua': 'دعاء',
   'library.typeSure': 'سورة',
   'library.typeAyet': 'آية',
-  'library.educationTitle': 'الصلاة والوضوء',
   'library.educationNote': 'للقراءة فقط.',
-  'library.educationNamaz': 'الصلاة',
-  'library.educationAbdest': 'الوضوء',
+  'library.sectionQuran': 'القرآن',
+  'library.sectionDua': 'أدعية الصلاة',
+  'library.sectionZikir': 'الأذكار',
+  'library.sectionEsma': 'أسماء الله الحسنى',
+  'library.sectionNamaz': 'دليل الصلاة',
+  'library.sectionAbdest': 'دليل الوضوء',
+  'library.quranComingSoon': 'المحتوى قريباً.',
+  'library.groupByPurpose': 'تجميع حسب الغرض',
+  'library.primaryPurpose': 'الغرض الرئيسي',
+  'library.secondaryPurpose': 'غرض ثانوي',
+  'library.recitedIn': 'أين يُقرأ',
+  'library.recitationReason': 'سبب القراءة ووظيفتها',
+  'library.religiousStatus': 'الحكم الشرعي',
+  'library.notVerified': 'لم يُتحقق منه بعد',
+  'library.verification': 'حالة التحقق',
+  'library.statusVerified': 'موثّق',
+  'library.statusPending': 'قيد المراجعة',
+  'library.statusUnverified': 'غير موثّق',
+  'library.duration': 'المدة',
+  'library.notes': 'ملاحظات',
+  'library.closeViewer': 'إغلاق',
+  'library.readFullScreen': 'اقرأ بملء الشاشة',
+  'library.ebcedNote': 'اقتراح تقليدي اختياري مبني على حساب الجُمّل، وليس حكماً ثابتاً بالحديث.',
   'counter.session': 'جلسة',
   'counter.morningSession': 'جلسة الصباح',
   'counter.eveningSession': 'جلسة المساء',
@@ -879,6 +963,7 @@ const de: TranslationDict = {
   'library.title': 'Gebetbibliothek',
   'library.registered': 'Gebete registriert',
   'library.searchPlaceholder': 'Gebet, Bedeutung oder Kategorie suchen...',
+  'library.searchPrayers': 'Nach Name, Aussprache oder Bedeutung suchen...',
   'library.all': 'Alle',
   'library.noResults': 'Keine Ergebnisse gefunden.',
   'library.meaning': 'Bedeutung / Zweck',
@@ -912,10 +997,30 @@ const de: TranslationDict = {
   'library.typeDua': 'Bittgebet',
   'library.typeSure': 'Sure',
   'library.typeAyet': 'Vers',
-  'library.educationTitle': 'Salat und Wudu',
   'library.educationNote': 'Nur zum Lesen.',
-  'library.educationNamaz': 'Salat',
-  'library.educationAbdest': 'Wudu',
+  'library.sectionQuran': 'Koran',
+  'library.sectionDua': 'Namaz-Rezitationen',
+  'library.sectionZikir': 'Dhikr',
+  'library.sectionEsma': '99 Namen Allahs',
+  'library.sectionNamaz': 'Salat-Leitfaden',
+  'library.sectionAbdest': 'Wudu-Leitfaden',
+  'library.quranComingSoon': 'Inhalte folgen in Kürze.',
+  'library.groupByPurpose': 'Nach Zweck gruppieren',
+  'library.primaryPurpose': 'Hauptzweck',
+  'library.secondaryPurpose': 'Nebenzweck',
+  'library.recitedIn': 'Wo es rezitiert wird',
+  'library.recitationReason': 'Zweck und Funktion',
+  'library.religiousStatus': 'Religiöser Status',
+  'library.notVerified': 'Noch nicht verifiziert',
+  'library.verification': 'Prüfstatus',
+  'library.statusVerified': 'Verifiziert',
+  'library.statusPending': 'In Prüfung',
+  'library.statusUnverified': 'Nicht verifiziert',
+  'library.duration': 'Dauer',
+  'library.notes': 'Hinweise',
+  'library.closeViewer': 'Schließen',
+  'library.readFullScreen': 'Im Vollbild lesen',
+  'library.ebcedNote': 'Ein optionaler traditioneller Vorschlag auf Basis der Abjad-Zahlen, keine hadithbasierte Vorschrift.',
   'counter.session': 'Sitzung',
   'counter.morningSession': 'Morgensitzung',
   'counter.eveningSession': 'Abendsitzung',
@@ -1085,6 +1190,7 @@ const fr: TranslationDict = {
   'library.title': 'Bibliothèque de Prières',
   'library.registered': 'prières enregistrées',
   'library.searchPlaceholder': 'Rechercher prière, signification ou catégorie...',
+  'library.searchPrayers': 'Rechercher par nom, prononciation ou sens...',
   'library.all': 'Tous',
   'library.noResults': 'Aucun résultat trouvé.',
   'library.meaning': 'Signification / But',
@@ -1118,10 +1224,30 @@ const fr: TranslationDict = {
   'library.typeDua': 'Invocation',
   'library.typeSure': 'Sourate',
   'library.typeAyet': 'Verset',
-  'library.educationTitle': 'Prière et ablutions',
   'library.educationNote': 'Contenu de référence, en lecture seule.',
-  'library.educationNamaz': 'Prière',
-  'library.educationAbdest': 'Ablutions',
+  'library.sectionQuran': 'Coran',
+  'library.sectionDua': 'Récitations de prière',
+  'library.sectionZikir': 'Dhikr',
+  'library.sectionEsma': '99 Noms d\'Allah',
+  'library.sectionNamaz': 'Guide de la prière',
+  'library.sectionAbdest': 'Guide des ablutions',
+  'library.quranComingSoon': 'Contenu bientôt disponible.',
+  'library.groupByPurpose': 'Grouper par objectif',
+  'library.primaryPurpose': 'Objectif principal',
+  'library.secondaryPurpose': 'Objectif secondaire',
+  'library.recitedIn': 'Où il est récité',
+  'library.recitationReason': 'Raison et fonction',
+  'library.religiousStatus': 'Statut religieux',
+  'library.notVerified': 'Pas encore vérifié',
+  'library.verification': 'Statut de vérification',
+  'library.statusVerified': 'Vérifié',
+  'library.statusPending': 'En cours de revue',
+  'library.statusUnverified': 'Non vérifié',
+  'library.duration': 'Durée',
+  'library.notes': 'Remarques',
+  'library.closeViewer': 'Fermer',
+  'library.readFullScreen': 'Lire en plein écran',
+  'library.ebcedNote': 'Suggestion traditionnelle facultative fondée sur le calcul abjad, non une prescription issue du hadith.',
   'counter.session': 'Session',
   'counter.morningSession': 'Session du Matin',
   'counter.eveningSession': 'Session du Soir',
