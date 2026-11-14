@@ -1,16 +1,18 @@
 import { useI18n } from '@/lib/i18n';
 import type { Prayer } from '@/lib/supabase';
 import { SearchField } from '@/components/system-library/LibraryControls';
-import { PrayerEntryList } from '@/components/system-library/PrayerEntries';
+import { PrayerEntryList, type PurposeLabels } from '@/components/system-library/PrayerEntries';
 
 export function EsmaSection({
   prayers,
   query,
   onQueryChange,
+  getPurposes,
 }: {
   prayers: Prayer[];
   query: string;
   onQueryChange: (query: string) => void;
+  getPurposes: (prayer: Prayer) => PurposeLabels;
 }) {
   const { t } = useI18n();
   const normalized = query.trim().toLowerCase();
@@ -34,7 +36,7 @@ export function EsmaSection({
       {filtered.length === 0 ? (
         <p className="py-10 text-center text-sm text-midnight-400">{t('library.noResults')}</p>
       ) : (
-        <PrayerEntryList prayers={filtered} variant="standard" showArabic />
+        <PrayerEntryList prayers={filtered} variant="standard" showArabic getPurposes={getPurposes} />
       )}
     </section>
   );

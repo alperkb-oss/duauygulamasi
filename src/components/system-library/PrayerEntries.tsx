@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Clock, Hash } from 'lucide-react';
 import { useI18n } from '@/lib/i18n';
-import type { Prayer } from '@/lib/supabase';
+import type { Prayer, PrayerUsage } from '@/lib/supabase';
 import { LibraryDetailViewer } from '@/components/system-library/LibraryDetailViewer';
 import {
   BASIS_KEYS,
@@ -17,11 +17,12 @@ type PrayerEntryListProps = {
   variant: 'dua' | 'standard';
   showArabic?: boolean;
   getPurposes?: (prayer: Prayer) => PurposeLabels;
+  getUsages?: (prayer: Prayer) => PrayerUsage[];
 };
 
 const NO_PURPOSES: PurposeLabels = { primary: null, secondary: [] };
 
-export function PrayerEntryList({ prayers, variant, showArabic = false, getPurposes }: PrayerEntryListProps) {
+export function PrayerEntryList({ prayers, variant, showArabic = false, getPurposes, getUsages }: PrayerEntryListProps) {
   const [selected, setSelected] = useState<Prayer | null>(null);
 
   return (
@@ -45,6 +46,7 @@ export function PrayerEntryList({ prayers, variant, showArabic = false, getPurpo
             prayer={selected}
             primaryPurpose={getPurposes?.(selected).primary ?? null}
             secondaryPurposes={getPurposes?.(selected).secondary ?? []}
+            usages={getUsages?.(selected) ?? []}
             variant={variant}
           />
         </LibraryDetailViewer>

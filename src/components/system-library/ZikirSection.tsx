@@ -15,27 +15,15 @@ type ZikirSectionProps = {
   prayers: Prayer[];
   purposes: PurposeGroup[];
   summaries: Map<string, PurposeSummary>;
+  getPurposes: (prayer: Prayer) => PurposeLabels;
   filters: ZikirFilters;
   onFiltersChange: (patch: Partial<ZikirFilters>) => void;
 };
 
-export function ZikirSection({ prayers, purposes, summaries, filters, onFiltersChange }: ZikirSectionProps) {
+export function ZikirSection({ prayers, purposes, summaries, getPurposes, filters, onFiltersChange }: ZikirSectionProps) {
   const { t, lang } = useI18n();
   const query = filters.query.trim().toLowerCase();
   const activePurpose = purposes.find((purpose) => purpose.id === filters.purposeId) ?? null;
-
-  const labelFor = (purposeId: string | null | undefined) => {
-    const purpose = purposes.find((item) => item.id === purposeId);
-    return purpose ? purposeLabel(purpose, lang) : null;
-  };
-
-  const purposesOf = (prayer: Prayer): PurposeLabels => {
-    const summary = summaries.get(prayer.id);
-    return {
-      primary: labelFor(summary?.primaryId),
-      secondary: (summary?.secondaryIds ?? []).map(labelFor).filter((label): label is string => Boolean(label)),
-    };
-  };
 
   const filtered = prayers.filter((prayer) => {
     const matchesQuery =
@@ -108,13 +96,13 @@ export function ZikirSection({ prayers, purposes, summaries, filters, onFiltersC
                 {group.label}
                 <span className="ml-2 text-xs font-normal text-midnight-400">{group.prayers.length}</span>
               </h3>
-              <PrayerEntryList prayers={group.prayers} variant="standard" getPurposes={purposesOf} />
+              <PrayerEntryList prayers={group.prayers} variant="standard" getPurposes={getPurposes} />
             </div>
           ))}
-          {ungrouped.length > 0 && <PrayerEntryList prayers={ungrouped} variant="standard" getPurposes={purposesOf} />}
+          {ungrouped.length > 0 && <PrayerEntryList prayers={ungrouped} variant="standard" getPurposes={getPurposes} />}
         </div>
       ) : (
-        <PrayerEntryList prayers={filtered} variant="standard" getPurposes={purposesOf} />
+        <PrayerEntryList prayers={filtered} variant="standard" getPurposes={getPurposes} />
       )}
     </section>
   );

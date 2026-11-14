@@ -99,10 +99,18 @@ export type TranslationKey =
   | 'library.groupByPurpose'
   | 'library.primaryPurpose'
   | 'library.secondaryPurpose'
-  | 'library.recitedIn'
-  | 'library.recitationReason'
-  | 'library.religiousStatus'
-  | 'library.notVerified'
+  | 'library.transliteration'
+  | 'library.basis'
+  | 'library.missingContent'
+  | 'library.usageTitle'
+  | 'library.usageHint'
+  | 'library.usageFarz'
+  | 'library.usageSunnah'
+  | 'library.usageCommon'
+  | 'library.usageStage'
+  | 'library.usageMethod'
+  | 'library.usageExplanation'
+  | 'library.usageMadhhab'
   | 'library.verification'
   | 'library.statusVerified'
   | 'library.statusPending'
@@ -327,10 +335,16 @@ const tr: TranslationDict = {
   'library.groupByPurpose': 'Amaca göre grupla',
   'library.primaryPurpose': 'Ana amaç',
   'library.secondaryPurpose': 'İkincil amaç',
-  'library.recitedIn': 'Hangi namazlarda okunur',
-  'library.recitationReason': 'Okunma amacı ve işlevi',
-  'library.religiousStatus': 'Dini hüküm',
-  'library.notVerified': 'Henüz doğrulanmadı',
+  'library.missingContent': 'Bu alan için içerik henüz eklenmedi',
+  'library.usageTitle': 'Namaz türlerine göre kullanım',
+  'library.usageHint': 'Bu bilgiler yalnızca bilgilendirme amaçlıdır. Planlarınızı, sayaçlarınızı ve ilerlemenizi değiştirmez; herhangi bir yükümlülük getirmez.',
+  'library.usageFarz': 'Farz',
+  'library.usageSunnah': 'Sünnet',
+  'library.usageCommon': 'Yaygın uygulama',
+  'library.usageStage': 'Namaz',
+  'library.usageMethod': 'Okunuş yöntemi',
+  'library.usageExplanation': 'Kısa açıklama',
+  'library.usageMadhhab': 'Mezhep notu',
   'library.verification': 'Doğrulama durumu',
   'library.statusVerified': 'Doğrulandı',
   'library.statusPending': 'Gözden geçiriliyor',
@@ -554,10 +568,16 @@ const en: TranslationDict = {
   'library.groupByPurpose': 'Group by purpose',
   'library.primaryPurpose': 'Primary',
   'library.secondaryPurpose': 'Secondary',
-  'library.recitedIn': 'Where it is recited',
-  'library.recitationReason': 'Why it is recited',
-  'library.religiousStatus': 'Religious status',
-  'library.notVerified': 'Not yet verified',
+  'library.missingContent': 'Content not added yet',
+  'library.usageTitle': 'Usage by prayer type',
+  'library.usageHint': 'For information only. This does not change your plans, counters or progress, and creates no obligation.',
+  'library.usageFarz': 'Fard',
+  'library.usageSunnah': 'Sunnah',
+  'library.usageCommon': 'Common practice',
+  'library.usageStage': 'Prayer',
+  'library.usageMethod': 'Recitation method',
+  'library.usageExplanation': 'Brief explanation',
+  'library.usageMadhhab': 'Madhhab note',
   'library.verification': 'Verification status',
   'library.statusVerified': 'Verified',
   'library.statusPending': 'Under review',
@@ -781,10 +801,16 @@ const ar: TranslationDict = {
   'library.groupByPurpose': 'تجميع حسب الغرض',
   'library.primaryPurpose': 'الغرض الرئيسي',
   'library.secondaryPurpose': 'غرض ثانوي',
-  'library.recitedIn': 'أين يُقرأ',
-  'library.recitationReason': 'سبب القراءة ووظيفتها',
-  'library.religiousStatus': 'الحكم الشرعي',
-  'library.notVerified': 'لم يُتحقق منه بعد',
+  'library.missingContent': 'لم يُضَف المحتوى بعد',
+  'library.usageTitle': 'الاستخدام حسب نوع الصلاة',
+  'library.usageHint': 'هذه المعلومات للإرشاد فقط، ولا تغيّر خططك أو عدّاداتك أو تقدّمك، ولا تفرض أي التزام.',
+  'library.usageFarz': 'فرض',
+  'library.usageSunnah': 'سنّة',
+  'library.usageCommon': 'ممارسة شائعة',
+  'library.usageStage': 'الصلاة',
+  'library.usageMethod': 'طريقة التلاوة',
+  'library.usageExplanation': 'شرح موجز',
+  'library.usageMadhhab': 'ملاحظة المذهب',
   'library.verification': 'حالة التحقق',
   'library.statusVerified': 'موثّق',
   'library.statusPending': 'قيد المراجعة',
@@ -1008,10 +1034,16 @@ const de: TranslationDict = {
   'library.groupByPurpose': 'Nach Zweck gruppieren',
   'library.primaryPurpose': 'Hauptzweck',
   'library.secondaryPurpose': 'Nebenzweck',
-  'library.recitedIn': 'Wo es rezitiert wird',
-  'library.recitationReason': 'Zweck und Funktion',
-  'library.religiousStatus': 'Religiöser Status',
-  'library.notVerified': 'Noch nicht verifiziert',
+  'library.missingContent': 'Inhalt noch nicht hinzugefügt',
+  'library.usageTitle': 'Verwendung nach Gebetsart',
+  'library.usageHint': 'Nur zur Information. Dies ändert weder Pläne, Zähler noch Fortschritt und begründet keine Verpflichtung.',
+  'library.usageFarz': 'Fard',
+  'library.usageSunnah': 'Sunna',
+  'library.usageCommon': 'Verbreitete Praxis',
+  'library.usageStage': 'Gebet',
+  'library.usageMethod': 'Rezitationsweise',
+  'library.usageExplanation': 'Kurze Erläuterung',
+  'library.usageMadhhab': 'Hinweis zur Rechtsschule',
   'library.verification': 'Prüfstatus',
   'library.statusVerified': 'Verifiziert',
   'library.statusPending': 'In Prüfung',
@@ -1235,10 +1267,16 @@ const fr: TranslationDict = {
   'library.groupByPurpose': 'Grouper par objectif',
   'library.primaryPurpose': 'Objectif principal',
   'library.secondaryPurpose': 'Objectif secondaire',
-  'library.recitedIn': 'Où il est récité',
-  'library.recitationReason': 'Raison et fonction',
-  'library.religiousStatus': 'Statut religieux',
-  'library.notVerified': 'Pas encore vérifié',
+  'library.missingContent': 'Contenu pas encore ajouté',
+  'library.usageTitle': 'Usage selon le type de prière',
+  'library.usageHint': 'À titre informatif uniquement. Cela ne modifie ni vos plans, ni vos compteurs, ni votre progression, et n’impose aucune obligation.',
+  'library.usageFarz': 'Fard',
+  'library.usageSunnah': 'Sunna',
+  'library.usageCommon': 'Pratique courante',
+  'library.usageStage': 'Prière',
+  'library.usageMethod': 'Méthode de récitation',
+  'library.usageExplanation': 'Brève explication',
+  'library.usageMadhhab': 'Note sur l’école juridique',
   'library.verification': 'Statut de vérification',
   'library.statusVerified': 'Vérifié',
   'library.statusPending': 'En cours de revue',

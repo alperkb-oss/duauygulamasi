@@ -2,12 +2,15 @@ import { useState } from 'react';
 import { BookOpen } from 'lucide-react';
 import { useI18n } from '@/lib/i18n';
 import type { TranslationKey } from '@/lib/translations';
+import type { Prayer } from '@/lib/supabase';
 import type { SystemLibraryData } from '@/components/system-library/systemLibraryData';
 import {
   buildPurposeSummaries,
+  buildUsageMap,
   isDuaPrayer,
   isEsmaPrayer,
   isZikirPrayer,
+  makePurposeLabeler,
   useSystemLibraryData,
 } from '@/components/system-library/systemLibraryData';
 import { FilterChip, FilterRow } from '@/components/system-library/LibraryControls';
@@ -54,9 +57,12 @@ function SystemLibraryContent({ data }: { data: SystemLibraryData }) {
   const [section, setSection] = useState<SectionKey>('dua');
   const [zikirFilters, setZikirFilters] = useState<ZikirFilters>({ query: '', purposeId: null, grouped: false });
   const [esmaQuery, setEsmaQuery] = useState('');
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
 
   const summaries = buildPurposeSummaries(data.purposeLinks);
+  const getPurposes = makePurposeLabeler(data.purposes, summaries, lang);
+  const usageMap = buildUsageMap(data.prayerUsages);
+  const getUsages = (prayer: Prayer) => usageMap.get(prayer.id) ?? [];
   const duaPrayers = data.prayers.filter(isDuaPrayer);
   const zikirPrayers = data.prayers.filter(isZikirPrayer);
   const esmaPrayers = data.prayers.filter(isEsmaPrayer);
@@ -73,18 +79,24 @@ function SystemLibraryContent({ data }: { data: SystemLibraryData }) {
       </FilterRow>
 
       {section === 'quran' && <QuranPlaceholder />}
-      {section === 'dua' && <DuaSection prayers={duaPrayers} />}
+      {section === 'dua' && <DuaSection prayers={duaPrayers} getPurposes={getPurposes} getUsages={getUsages} />}
       {section === 'zikir' && (
         <ZikirSection
           prayers={zikirPrayers}
           purposes={data.purposes}
           summaries={summaries}
+          getPurposes={getPurposes}
           filters={zikirFilters}
           onFiltersChange={(patch) => setZikirFilters((current) => ({ ...current, ...patch }))}
         />
       )}
       {section === 'esma' && (
-        <EsmaSection prayers={esmaPrayers} query={esmaQuery} onQueryChange={setEsmaQuery} />
+        <EsmaSection
+          prayers={esmaPrayers}
+          query={esmaQuery}
+          onQueryChange={setEsmaQuery}
+          getPurposes={getPurposes}
+        />
       )}
       {section === 'namaz' && <GuideSection titleKey="library.sectionNamaz" rows={educationRows('namaz')} />}
       {section === 'abdest' && <GuideSection titleKey="library.sectionAbdest" rows={educationRows('abdest')} />}

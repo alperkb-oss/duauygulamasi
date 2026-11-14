@@ -36,6 +36,19 @@ export type PrayerPurposeLink = {
   is_primary: boolean;
 };
 
+export type PrayerUsageType = 'farz' | 'sunnah' | 'common';
+
+export type PrayerUsage = {
+  id: string;
+  prayer_id: string;
+  usage_type: PrayerUsageType;
+  stages: string[];
+  recitation_method: string | null;
+  explanation: string | null;
+  source_reference: string | null;
+  madhhab_note: string | null;
+};
+
 export type EducationalTopic = 'namaz' | 'abdest';
 export type EducationalKind = 'title' | 'heading' | 'paragraph' | 'table_row';
 

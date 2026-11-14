@@ -1,8 +1,17 @@
 import { useI18n } from '@/lib/i18n';
-import type { Prayer } from '@/lib/supabase';
+import type { Prayer, PrayerUsage } from '@/lib/supabase';
+import type { PurposeLabels } from '@/components/system-library/PrayerEntries';
 import { PrayerEntryList } from '@/components/system-library/PrayerEntries';
 
-export function DuaSection({ prayers }: { prayers: Prayer[] }) {
+export function DuaSection({
+  prayers,
+  getPurposes,
+  getUsages,
+}: {
+  prayers: Prayer[];
+  getPurposes: (prayer: Prayer) => PurposeLabels;
+  getUsages: (prayer: Prayer) => PrayerUsage[];
+}) {
   const { t } = useI18n();
 
   return (
@@ -11,7 +20,7 @@ export function DuaSection({ prayers }: { prayers: Prayer[] }) {
       {prayers.length === 0 ? (
         <p className="py-10 text-center text-sm text-midnight-400">{t('library.noResults')}</p>
       ) : (
-        <PrayerEntryList prayers={prayers} variant="dua" showArabic />
+        <PrayerEntryList prayers={prayers} variant="dua" showArabic getPurposes={getPurposes} getUsages={getUsages} />
       )}
     </section>
   );
